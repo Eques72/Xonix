@@ -50,7 +50,6 @@ class Player : public Entity
 	void drop(Map* map, int XY); //wype³nia plamami miejsca puste z którymi maj¹ styccznoœæ przeciwnicy
 
 
-public:
 
 
 
@@ -77,13 +76,7 @@ public:
 	*/
 	int checkCollisons(sf::Vector2f pos);
 
-	/**
-	* Funkcja sprawdza nad jakiego typu polem jest centrum postaci,
-	* Przyjmuje wskaŸnik na obiekt Mapy u¿ywanej obecnie
-	* Wywo³ywana w Player::move() tylko kiedy œrodek wchodzi na nowy obszar(pole)
-	* Zwraca okreœlany numerycznie typ pola pod postaci¹
-	*/
-	int checkTileBellow(Map* map);
+
 
 	/**
 	* Funkcja zmienia o podane paremetry obecny kierunek postaci okreœlany wartoœæiami 
@@ -104,6 +97,22 @@ public:
 	* Destruktor
 	*/
 	~Player();
+
+
+	friend class GameLogic;
+	friend class KeyboardImput;
+
+	public:
+
+	std::pair<int, int> getPositionPx();
+
+	/**
+	* Funkcja sprawdza nad jakiego typu polem jest centrum postaci,
+	* Przyjmuje wskaŸnik na obiekt Mapy u¿ywanej obecnie
+	* Wywo³ywana w Player::move() tylko kiedy œrodek wchodzi na nowy obszar(pole)
+	* Zwraca okreœlany numerycznie typ pola pod postaci¹
+	*/
+	std::pair<int, int> checkTileBellow(Map* map);
 
 };
 

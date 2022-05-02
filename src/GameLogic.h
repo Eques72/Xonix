@@ -4,6 +4,7 @@
 #include "Enemy.h"
 #include "DefaultEnemy.h"
 #include "DestroyerEnemy.h"
+#include "HunterEnemy.h"
 
 #include "Map.h"
 #include "Player.h"

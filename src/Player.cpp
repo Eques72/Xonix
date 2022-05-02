@@ -40,7 +40,14 @@ void Player::move(Map* map)
 	}
 
 	if (((int)oldPos.x - ENTITY_RADIUS) % Map::TILE_SIZE == 0 && ((int)oldPos.y - ENTITY_RADIUS) % Map::TILE_SIZE == 0)
-		conquestPossible = tail->checkPlayerState(checkTileBellow(map));
+	{
+		std::pair<int, int> tileInfo = checkTileBellow(map);
+		
+		if(tileInfo.second == Map::EMPTY_TILE)
+			map->changeTileState(tileInfo.first, Map::TAIL_TILE);
+		conquestPossible = tail->checkPlayerState(tileInfo.second);
+	}
+
 
 	body.setPosition(sf::Vector2f(oldPos.x + (speed * velocity.first), oldPos.y + (speed * velocity.second)));
 
@@ -66,7 +73,7 @@ int Player::checkCollisons(sf::Vector2f pos)
 
 }
 
-int Player::checkTileBellow(Map* map)
+std::pair<int,int> Player::checkTileBellow(Map* map)
 {
 	int X = ((int)body.getPosition().x - 3) / Map::TILE_SIZE; //int used deliberately
 	int Y = ((int)body.getPosition().y - 3) / Map::TILE_SIZE; //int used deliberately
@@ -74,12 +81,7 @@ int Player::checkTileBellow(Map* map)
 	int indexXY = (int)(X + (Y * Map::MAP_WIDTH));
 	int tileType = map->getTileState(indexXY);
 
-	if (tileType == Map::EMPTY_TILE)
-	{
-		map->changeTileState(indexXY, Map::TAIL_TILE);
-	}
-
-	return tileType;
+	return std::make_pair(indexXY,tileType);
 }
 
 void Player::changeVelocity(int x, int y)
@@ -105,5 +107,14 @@ void Player::conquer(Map* map, std::vector<int> positions)
 
 	conquestPossible = false;
 }
+
+std::pair<int, int> Player::getPositionPx()
+{
+	int x = body.getPosition().x;
+	int y = body.getPosition().y;
+	return std::make_pair(x, y);
+}
+
+
 
 Player::~Player() { delete tail; }

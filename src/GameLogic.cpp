@@ -29,8 +29,8 @@
 			enemies.push_back(std::make_unique<DefaultEnemy>(500 + q * 30, 500, 3, 1));
 		for (int q = 0; q < levelInfo[3]; q++)
 			enemies.push_back(std::make_unique<DestroyerEnemy>(0, 0, 2, 2));
-		for (int q = 0; q < levelInfo[4]; q++);
-		//TO DO
+		for (int q = 0; q < levelInfo[4]; q++)
+			enemies.push_back(std::make_unique<HunterEnemy>(0, 0, 2, 2, player));
 		for (int q = 0; q < levelInfo[5]; q++);
 		//TO DO
 		for (int q = 0; q < levelInfo[6]; q++);

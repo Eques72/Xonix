@@ -61,22 +61,22 @@
 		std::pair<int, int> vert = { 0,0 }; 
 		std::pair<int, int> horiz = { 0,0 };
 
-		if (velocity.second == 1) //moves downwards
+		if (velocity.second >= 1) //moves downwards
 		{
 			vert = getDside();
 			vert.second += speed;
 		}
-		else if (velocity.second == -1) //moves upwards
+		else if (velocity.second <= -1) //moves upwards
 		{
 			vert = getUside();
 			vert.second -= speed;
 		}
-		if (velocity.first == 1) //moves to the right
+		if (velocity.first >= 1) //moves to the right
 		{
 			horiz = getRside();
 			horiz.first += speed;
 		}
-		else if (velocity.first == -1) //moves to the left
+		else if (velocity.first <= -1) //moves to the left
 		{
 			horiz = getLside();
 			horiz.first -= speed;

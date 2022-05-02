@@ -93,3 +93,18 @@ void Map::resetMap()
 {
   FileManager::readMapFile(mapping, "resources/gameSettings/map.txt");
 }
+
+
+bool Map::isTileInOuterRing(int index) 
+{
+	if (index >= 0 && index < Map::MAP_WIDTH)
+		return true;
+	if (index >= Map::MAP_WIDTH * (Map::MAP_HEIGHT-1) && index < Map::MAP_WIDTH*Map::MAP_HEIGHT)
+		return true;
+	if ((index % Map::MAP_WIDTH) == 0)
+		return true;
+	if ((index % Map::MAP_WIDTH) == Map::MAP_WIDTH - 1)
+		return true;
+
+	return false;
+}
