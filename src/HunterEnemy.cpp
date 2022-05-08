@@ -15,7 +15,7 @@ HunterEnemy::HunterEnemy(float _x, float _y, int sp, int type, Player* p) :Enemy
 	std::uniform_int_distribution<>  _X(range_from_X, range_to_X);
 	std::uniform_int_distribution<>  _Y(range_from_Y, range_to_Y);
 
-	velocity = std::make_pair(0,0);
+	velocity = std::make_pair(0, 0);
 
 	loadTextures("resources/enemyHunt.png");
 	body.setOrigin(15, 15);
@@ -25,7 +25,7 @@ HunterEnemy::HunterEnemy(float _x, float _y, int sp, int type, Player* p) :Enemy
 	body.setPosition(sf::Vector2f(spawnPoint.first, spawnPoint.second));
 }
 
-void HunterEnemy::move(Map* map) 
+void HunterEnemy::move(Map* map)
 {
 	std::pair<int, int> pl = victim->checkTileBellow(map);
 	if (pl.second == Map::WALL_TILE)
@@ -57,7 +57,7 @@ void HunterEnemy::move(Map* map)
 bool HunterEnemy::changeDirection(int param) { return false; }
 
 
-void HunterEnemy::calmDown() 
+void HunterEnemy::calmDown()
 {
 	if (body.getPosition().x > spawnPoint.first)
 		velocity.first = -1;

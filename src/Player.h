@@ -7,14 +7,14 @@
 class Player : public Entity
 {
 	/**
-	* Struktura przechowuj¹ca dane potrzebne do zmiany kierunku postaci, 
-	* przypisywane s¹ kiedy steruj¹cy u¿ytkownik zarz¹da obrotu postaci 
+	* Struktura przechowuj¹ca dane potrzebne do zmiany kierunku postaci,
+	* przypisywane s¹ kiedy steruj¹cy u¿ytkownik zarz¹da obrotu postaci
 	* Dane wyko¿ystane s¹ przy najbli¿szym mo¿liwym obrocie
 	*/
-	struct nextMove 
+	struct nextMove
 	{
 		bool inQueue = false;
-		std::pair<int, int> nextVelocity = {0,0};
+		std::pair<int, int> nextVelocity = { 0,0 };
 		float nextRotation = 0;
 	};
 
@@ -24,9 +24,9 @@ class Player : public Entity
 		bool playerEntered = false;
 
 	public:
-		Tail(Player* p): head(p) {}
-		
-		bool checkPlayerState(int state) 
+		Tail(Player* p) : head(p) {}
+
+		bool checkPlayerState(int state)
 		{
 			if (playerEntered == 0 && state == Map::EMPTY_TILE)
 			{
@@ -61,15 +61,15 @@ class Player : public Entity
 	void revivePlayer();
 
 	/**
-	* Funkcja ujmuj¹ca wszystkie aspekty poruszania siê postaci wywo³uj¹ca inne wyspecjalizowane wynkcje 
+	* Funkcja ujmuj¹ca wszystkie aspekty poruszania siê postaci wywo³uj¹ca inne wyspecjalizowane wynkcje
 	* oraz obliczaj¹ca podstawowe parametry poruszania
 	*/
 	void move(Map* map) override;
 
 	/**
-	* Funkcja zapewniaj¹ca ¿e postaæ obróci siê w najbli¿szym mo¿liwym momencie, 
+	* Funkcja zapewniaj¹ca ¿e postaæ obróci siê w najbli¿szym mo¿liwym momencie,
 	* kiedy centrum bêdzie pokrywa³o siê z centrum pola na mapie
-	*/ 
+	*/
 	void planNextTurn(int x, int y, float degree);
 	/**
 	* Funkcja sprawdza kolizje z krañcami mapy, ustawia odpowiednio postaæ aby nie wykroczy³a poza granice
@@ -79,10 +79,10 @@ class Player : public Entity
 
 
 	/**
-	* Funkcja zmienia o podane paremetry obecny kierunek postaci okreœlany wartoœæiami 
+	* Funkcja zmienia o podane paremetry obecny kierunek postaci okreœlany wartoœæiami
 	* [	0 1	-1]
 	*/
-	void changeVelocity(int x, int y);
+	void changeVelocity(float x, float y);
 
 	/**
 	* Funkcja obraca Sprite o podany w stopniach k¹t liczony zawsze od zwrotu gdy rotacja wynosi domyœln¹ wartoœæ
@@ -102,7 +102,7 @@ class Player : public Entity
 	friend class GameLogic;
 	friend class KeyboardImput;
 
-	public:
+public:
 
 	std::pair<int, int> getPositionPx();
 

@@ -14,9 +14,13 @@
 #include "FileManager.h"
 
 #include <memory>
+#include <thread>
 #include <vector>
 
-#include <random>
+#include <random> //is it needed?
+
+
+
 
 class GameLogic
 {
@@ -27,13 +31,18 @@ class GameLogic
 	KeyboardImput kI;
 	GWindow winG;
 
-	std::vector<std::unique_ptr<Enemy>> enemies;
-	std::vector<std::string> levels;
-	std::vector<int> levelInfo; 
-	int hitPoints; //+1 after finished level, -1 if any game over condition met
-	int currentLevel = 1;
-	static const int maxLevels = 20;
+	std::vector<std::shared_ptr<Enemy>> enemies;
+	std::vector<std::shared_ptr<Enemy>> nextLevelEnemies;
 
+	std::vector<std::string> levels;
+	std::vector<int> levelInfo;
+	std::vector<int> nextLevelInfo;
+	std::thread nextLevelLoader;
+
+	int hitPoints; //+1 after finished level, -1 if any game over condition met
+	int nextLevelIndex = 1;
+	int currentLevelIndex = 0;
+	static const int maxLevels = 20;
 public:
 	GameLogic() { start(); };
 
@@ -42,7 +51,8 @@ public:
 
 	void setUpNextLevel();
 	bool checkLevelCompletion();
-	void getLevelInformation();
+	void getLevelInformation(int index);
+	void prepareNextLevel();
 
 	void calculateLogic();
 	bool checkGameOverConditions();

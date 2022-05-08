@@ -8,17 +8,22 @@ DestroyerEnemy::DestroyerEnemy(float _x, float _y, int sp, int type) :Enemy(sp, 
 	int range_from = Map::TILE_SIZE * 2;
 	int range_to_X = Map::MAP_WIDTH_PIXELS - (Map::TILE_SIZE * 2);
 	int range_to_Y = Map::MAP_HEIGHT_PIXELS - (Map::TILE_SIZE * 2);
-	
+
 	std::uniform_int_distribution<>  _X(range_from, range_to_X);
 	std::uniform_int_distribution<>  _Y(range_from, range_to_Y);
-	
-	int tab[2] = {-1, 1};
-	
+
+	//	float tab[12][2] = { {1.0, 1.0},{-1.0, -1.0},{-1.0, 1.0},{1.0, -1.0},
+		//	{-2.0, 0.5},{-2.0, 0.5},{2.0, 0.5},{2.0, -0.5}, 
+			//{0.5, 2.0},{-0.5, 2.0},{0.5, -2.0},{-0.5, -2.0}	};
+	float tab[2] = { -1, 1 };
+
 	std::uniform_int_distribution<>  _Dir(0, 1);
+	//	std::uniform_int_distribution<>  _Dir(0, 11);
+	//	int _GetDir = _Dir(generator);
 
-
+	//	velocity = std::make_pair(tab[_GetDir][0], tab[_GetDir][1]);
 	velocity = std::make_pair(tab[_Dir(generator)], tab[_Dir(generator)]);
-	
+
 	loadTextures("resources/enemy.png");
 	body.setColor(sf::Color::Magenta);
 	body.setOrigin(15, 15);
@@ -26,15 +31,15 @@ DestroyerEnemy::DestroyerEnemy(float _x, float _y, int sp, int type) :Enemy(sp, 
 }
 
 void DestroyerEnemy::move(Map* map)
-{	
+{
 	std::pair<int, int> oldVeclocity = velocity;
 
 	if (!changeDirection(checkWallCollisons(map)))
 		body.setPosition(sf::Vector2f(body.getPosition().x + (speed * velocity.first),
 			body.getPosition().y + (speed * velocity.second)));
-	else 
+	else
 	{
-		std::pair<int,int> tileInfo = checkBlockInFront(map, oldVeclocity);
+		std::pair<int, int> tileInfo = checkBlockInFront(map, oldVeclocity);
 		if (tileInfo.first == Map::WALL_TILE && map->isTileInOuterRing(tileInfo.second) == false)
 			map->changeTileState(tileInfo.second, Map::EMPTY_TILE);
 	}
@@ -48,7 +53,7 @@ std::pair<int, int> DestroyerEnemy::checkBlockInFront(Map* m, std::pair<int, int
 
 	if (vel.second >= 1)
 		pos.y += Entity::ENTITY_RADIUS;
-	else if (vel.second <= -1) 
+	else if (vel.second <= -1)
 		pos.y -= Entity::ENTITY_RADIUS;
 	if (vel.first >= 1)
 		pos.x += Entity::ENTITY_RADIUS;

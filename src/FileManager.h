@@ -6,11 +6,11 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 
-class FileManager 
+class FileManager
 {
 public:
 
-	static sf::Image& openImage(std::filesystem::path path) 
+	static sf::Image& openImage(std::filesystem::path path)
 	{
 		sf::Image i;
 		i.loadFromFile(path.string());
@@ -44,15 +44,15 @@ public:
 	}
 
 	/*template <typename T>
-	static void readFromFile(T& contener, std::filesystem::path path) 
+	static void readFromFile(T& contener, std::filesystem::path path)
 	{
 		std::ifstream stream(path.string());
 		if(stream.is_open())
-		{ 
+		{
 			std::string tmp;
 			while (std::getline(stream, tmp))
 				contener.push_back(tmp);
-		
+
 			stream.close();
 		}
 	}*/
@@ -93,12 +93,12 @@ public:
 	}
 
 
-	static bool createFile(std::filesystem::path path, std::string name, std::string content) 
+	static bool createFile(std::filesystem::path path, std::string name, std::string content)
 	{
 		if (!std::filesystem::exists(path.string() + "/" + name))
 		{
 			std::ofstream stream(path.string() + " / " + name);
-			
+
 			stream << content;
 
 			stream.close();
@@ -106,14 +106,14 @@ public:
 		}
 		return false;
 	}
-	 
+
 	static bool createFile(std::filesystem::path path, std::string name, std::vector<std::string> contents)
 	{
 		if (!std::filesystem::exists(path.string() + "/" + name))
 		{
 			std::ofstream stream(path.string() + " / " + name);
 
-			for(auto c : contents)
+			for (auto c : contents)
 				stream << c << '\n';
 
 			stream.close();
@@ -132,20 +132,20 @@ public:
 			stream << content;
 
 			stream.close();
-			
+
 			return true;
 		}
 		return false;
 	}
 
-	static bool checkDir(std::filesystem::path path) 
+	static bool checkDir(std::filesystem::path path)
 	{
 		if (std::filesystem::exists(path.string()))
 			return true;
 		return false;
 	}
 
-	static bool createDir(std::filesystem::path path, std::string name) 
+	static bool createDir(std::filesystem::path path, std::string name)
 	{
 		if (!checkDir(path.string() + "/" + name))
 		{

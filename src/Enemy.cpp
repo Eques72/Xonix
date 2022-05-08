@@ -10,28 +10,34 @@ int Enemy::checkWallCollisons(Map* map) //0 for no coll, 1 for vert coll, 2 for 
 	//	[ , , ] bierzemy wybrany pkt jego dok³adna poz i potem go dopasujemy do klocka 
 	//	[ , , ]
 
-	if (velocity.second == 1) //moves downwards
+	//	if (velocity.second >= 1) //moves downwards
+	if (velocity.second > 0) //moves downwards
 	{
 		vert = getDside();
 		vert.second += speed;
 	}
-	else if (velocity.second == -1) //moves upwards
+	else if (velocity.second < 0) //moves upwards
+//		else if (velocity.second <= -1) //moves upwards
 	{
 		vert = getUside();
 		vert.second -= speed;
 	}
-	if (velocity.first == 1) //moves to the right
+
+	//		if (velocity.first >= 1) //moves to the right
+	if (velocity.first > 0) //moves to the right
 	{
 		horiz = getRside();
 		horiz.first += speed;
 	}
-	else if (velocity.first == -1) //moves to the left
+	//		else if (velocity.first <= -1) //moves to the left
+	else if (velocity.first < 0) //moves to the left
 	{
 		horiz = getLside();
 		horiz.first -= speed;
 	}
 
-	if (velocity.second == 1 || velocity.second == -1)
+	if (velocity.second != 0)
+		//		if (velocity.second == 1 || velocity.second == -1)
 	{
 		int X = (vert.first - vert.first % Map::TILE_SIZE) / Map::TILE_SIZE;
 		int Y = (vert.second - vert.second % Map::TILE_SIZE) / Map::TILE_SIZE;
@@ -46,7 +52,8 @@ int Enemy::checkWallCollisons(Map* map) //0 for no coll, 1 for vert coll, 2 for 
 			collisionDir = 1;
 		}
 	}
-	if (velocity.first == 1 || velocity.first == -1)
+	//		if (velocity.first == 1 || velocity.first == -1)
+	if (velocity.first != 0)
 	{
 		int index = (horiz.first - horiz.first % Map::TILE_SIZE) / Map::TILE_SIZE
 			+ (Map::MAP_WIDTH * ((horiz.second - horiz.second % Map::TILE_SIZE) / Map::TILE_SIZE));

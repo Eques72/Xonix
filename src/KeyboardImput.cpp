@@ -1,6 +1,6 @@
 #include "KeyboardImput.h"
 
-KeyboardImput::KeyboardImput(Player * p) : player(p) {}
+KeyboardImput::KeyboardImput(Player* p) : player(p) {}
 
 void KeyboardImput::setPlayer(Player* p) { player = p; }
 

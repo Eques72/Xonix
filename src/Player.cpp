@@ -42,8 +42,8 @@ void Player::move(Map* map)
 	if (((int)oldPos.x - ENTITY_RADIUS) % Map::TILE_SIZE == 0 && ((int)oldPos.y - ENTITY_RADIUS) % Map::TILE_SIZE == 0)
 	{
 		std::pair<int, int> tileInfo = checkTileBellow(map);
-		
-		if(tileInfo.second == Map::EMPTY_TILE)
+
+		if (tileInfo.second == Map::EMPTY_TILE)
 			map->changeTileState(tileInfo.first, Map::TAIL_TILE);
 		conquestPossible = tail->checkPlayerState(tileInfo.second);
 	}
@@ -73,7 +73,7 @@ int Player::checkCollisons(sf::Vector2f pos)
 
 }
 
-std::pair<int,int> Player::checkTileBellow(Map* map)
+std::pair<int, int> Player::checkTileBellow(Map* map)
 {
 	int X = ((int)body.getPosition().x - 3) / Map::TILE_SIZE; //int used deliberately
 	int Y = ((int)body.getPosition().y - 3) / Map::TILE_SIZE; //int used deliberately
@@ -81,10 +81,10 @@ std::pair<int,int> Player::checkTileBellow(Map* map)
 	int indexXY = (int)(X + (Y * Map::MAP_WIDTH));
 	int tileType = map->getTileState(indexXY);
 
-	return std::make_pair(indexXY,tileType);
+	return std::make_pair(indexXY, tileType);
 }
 
-void Player::changeVelocity(int x, int y)
+void Player::changeVelocity(float x, float y)
 {
 	velocity.first = x;
 	velocity.second = y;

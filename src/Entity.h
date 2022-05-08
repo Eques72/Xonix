@@ -6,12 +6,14 @@
 #include "Animation.h"
 #include "Map.h"
 
+
+
 class Entity
 {
 protected:
-	std::pair<int, int> velocity;
+	std::pair<float, float> velocity;
 	int speed;
-	
+
 	sf::Image imageWithTexture;
 	sf::Texture texture;
 	sf::Sprite body;
@@ -40,7 +42,7 @@ public:
 	bool checkTailCollisons(Map* map);
 
 
-	~Entity() { delete animation;  }
+	~Entity() { delete animation; }
 };
 
 

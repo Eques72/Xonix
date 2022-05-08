@@ -1,149 +1,172 @@
 #include "GameLogic.h"
 
-	void GameLogic::start()
+void GameLogic::start()
+{
+	player = new Player(6);
+	map = new Map();
+	kI.setPlayer(player);
+	hitPoints = 3;
+
+	FileManager::readLevelsFile(levels, "resources/gameSettings/levels.txt");
+
+	prepareNextLevel();
+	setUpNextLevel();
+
+	++currentLevelIndex;
+	++nextLevelIndex;
+
+	nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
+	run();
+
+}
+
+void GameLogic::prepareNextLevel()
+{
+	getLevelInformation(nextLevelIndex);
+
+	for (int q = 0; q < nextLevelInfo[2]; q++)
+		nextLevelEnemies.push_back(std::make_shared<DefaultEnemy>(500 + q * 30, 500, 3, 1));
+	for (int q = 0; q < nextLevelInfo[3]; q++)
+		nextLevelEnemies.push_back(std::make_shared<DestroyerEnemy>(0, 0, 2, 2));
+	for (int q = 0; q < nextLevelInfo[4]; q++)
+		nextLevelEnemies.push_back(std::make_shared<HunterEnemy>(0, 0, 2, 2, player));
+	for (int q = 0; q < nextLevelInfo[5]; q++);
+	//TO DO
+	for (int q = 0; q < nextLevelInfo[6]; q++);
+	//TO DO
+}
+
+void GameLogic::setUpNextLevel()
+{
+	levelInfo = nextLevelInfo;
+	player->revivePlayer();
+	map->resetMap();
+
+	enemies.clear();
+	enemies = nextLevelEnemies;
+	nextLevelEnemies.clear();
+}
+
+void GameLogic::getLevelInformation(int index)
+{
+	nextLevelInfo.clear();
+	std::string tmpNum;
+	for (auto c : levels[index])
 	{
-		player = new Player(6);
-		map = new Map();
-		kI.setPlayer(player);
-		hitPoints = 3;
-
-		FileManager::readLevelsFile(levels, "resources/gameSettings/levels.txt");
-		
-		setUpNextLevel();
-
-		run();
-
-	}
-
-	void GameLogic::setUpNextLevel() 
-	{
-		getLevelInformation();
-
-		player->revivePlayer();
-		map->resetMap();
-
-		enemies.clear();
-
-
-		for (int q = 0; q < levelInfo[2]; q++)
-			enemies.push_back(std::make_unique<DefaultEnemy>(500 + q * 30, 500, 3, 1));
-		for (int q = 0; q < levelInfo[3]; q++)
-			enemies.push_back(std::make_unique<DestroyerEnemy>(0, 0, 2, 2));
-		for (int q = 0; q < levelInfo[4]; q++)
-			enemies.push_back(std::make_unique<HunterEnemy>(0, 0, 2, 2, player));
-		for (int q = 0; q < levelInfo[5]; q++);
-		//TO DO
-		for (int q = 0; q < levelInfo[6]; q++);
-		//TO DO
-	}
-
-	void GameLogic::getLevelInformation() 
-	{
-		levelInfo.clear();
-		std::string tmpNum;
-		for (auto c : levels[currentLevel])
+		if (c != ';')
+			tmpNum.push_back(c);
+		else
 		{
-			if (c != ';')
-				tmpNum.push_back(c);
-			else
-			{
-				levelInfo.push_back(std::stoi(tmpNum));
-				tmpNum = "";
-			}
+			nextLevelInfo.push_back(std::stoi(tmpNum));
+			tmpNum = "";
 		}
 	}
+}
 
-	bool GameLogic::checkLevelCompletion() 
-	{
-		if (map->getProggres() >= levelInfo[1])
-			return true;
-		return false;
-	}
+bool GameLogic::checkLevelCompletion()
+{
+	if (map->getProggres() >= levelInfo[1])
+		return true;
+	return false;
+}
 
-	void GameLogic::drawEntities()
+void GameLogic::drawEntities()
+{
+	map->draw(winG.getWindow());
+	player->draw(winG.getWindow());
+
+	for (int q = 0; q < enemies.size(); q++)
+		enemies[q]->draw(winG.getWindow());
+}
+
+
+
+void GameLogic::calculateLogic()
+{
+
+	kI.checkKeyboardImput();
+	player->move(map);
+
+	std::vector<std::thread> threads;
+
+	if (player->getConquestState())
 	{
-		map->draw(winG.getWindow());
-		player->draw(winG.getWindow());
+		std::vector<int> t;
 		for (int q = 0; q < enemies.size(); q++)
-			enemies[q]->draw(winG.getWindow());
+			t.push_back(enemies[q]->getIndexOfTile());
+		player->conquer(map, t);
 	}
+	for (int q = 0; q < enemies.size(); q++)
+		threads.emplace_back(&Enemy::move, enemies[q].get(), std::ref(map));
+	for (auto& t : threads)
+		t.join();
+}
 
-	void GameLogic::calculateLogic()
+
+void GameLogic::run()
+{
+	while (winG.getWindow().isOpen())
 	{
-
-		kI.checkKeyboardImput();
-		player->move(map);
-
-		if (player->getConquestState())
-		{
-			std::vector<int> t;
-			for (int q = 0; q < enemies.size(); q++)
-				t.push_back(enemies[q]->getIndexOfTile());
-			player->conquer(map, t);
-		}
-		for (int q = 0; q < enemies.size(); q++)
-			enemies[q]->move(map);
-
-	}
-
-
-	void GameLogic::run()
-	{
-		while (winG.getWindow().isOpen()) 
-		{
-			sf::Event event;
-			while (winG.getWindow().pollEvent(event))
-				if (event.type == sf::Event::Closed)
-					winG.getWindow().close();
-
-			if (checkGameOverConditions())
-				deathProc();
-			if (hitPoints <= 0)
+		sf::Event event;
+		while (winG.getWindow().pollEvent(event))
+			if (event.type == sf::Event::Closed)
 				winG.getWindow().close();
 
-			if(checkLevelCompletion())
-			{
-				++currentLevel;
-				if(hitPoints <= 5)
-					++hitPoints;
-				setUpNextLevel();
-			}
+		if (checkGameOverConditions())
+			deathProc();
+		if (hitPoints <= 0)
+			winG.getWindow().close();
 
-			calculateLogic();
+		if (checkLevelCompletion())
+		{
+			++currentLevelIndex;
+			++nextLevelIndex;
+			if (hitPoints <= 5)
+				++hitPoints;
 
-			winG.getWindow().clear();
-			drawEntities();
-			winG.getWindow().display();
-
+			nextLevelLoader.join();
+			setUpNextLevel();
+			nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
 		}
+
+		calculateLogic();
+
+		winG.getWindow().clear();
+		drawEntities();
+		winG.getWindow().display();
+
 	}
+}
 
 
-	bool GameLogic::checkGameOverConditions()
-	{
-		if (player->checkTailCollisons(map)) 
+bool GameLogic::checkGameOverConditions()
+{
+	if (player->checkTailCollisons(map))
+		return true;
+
+	for (int q = 0; q < enemies.size(); q++)
+		if (enemies[q]->checkTailCollisons(map))
 			return true;
 
-		for (int q = 0; q < enemies.size(); q++)
-			if (enemies[q]->checkTailCollisons(map))
-				return true;
+	for (int q = 0; q < enemies.size(); q++)
+		if (enemies[q]->chcekEntityCollions(player))
+			return true;
 
-		for (int q = 0; q < enemies.size(); q++)
-			if (enemies[q]->chcekEntityCollions(player))
-				return true;
+	return false;
+}
 
-		return false;
-	}
+void GameLogic::deathProc()
+{
+	--hitPoints;
+	player->revivePlayer();
+	map->clearTail();
+}
 
-	void GameLogic::deathProc()
-	{
-		--hitPoints;
-		player->revivePlayer();
-		map->clearTail();
-	}
+GameLogic::~GameLogic()
+{
+	delete player;
+	delete map;
 
-	GameLogic::~GameLogic()
-	{
-		delete player;
-		delete map;
-	}
+	if (nextLevelLoader.joinable())
+		nextLevelLoader.join();
+}

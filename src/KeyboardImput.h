@@ -9,7 +9,7 @@ class KeyboardImput
 	Player* player = nullptr;
 
 public:
-	
+
 	KeyboardImput() {};
 	KeyboardImput(Player* p);
 

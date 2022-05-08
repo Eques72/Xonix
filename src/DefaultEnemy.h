@@ -4,7 +4,7 @@
 #include "Enemy.h"
 
 
-class DefaultEnemy : public Enemy 
+class DefaultEnemy : public Enemy
 {
 public:
 

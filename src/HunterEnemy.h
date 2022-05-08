@@ -21,7 +21,7 @@ public:
 	/// Function useless in this context
 	/// </summary>
 	bool changeDirection(int param) override;
-	
+
 	void trackNewTail(Map* m);
 
 	/// <summary>

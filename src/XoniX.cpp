@@ -1,11 +1,13 @@
 ﻿#include "GameLogic.h"
 
+
+
 /**
-* A main function, 
+* A main function,
 */
 int main(int argc, char argv[])
 {
-    GameLogic game;
+	GameLogic game;
 
-    return 0;
+	return 0;
 }
