@@ -6,8 +6,7 @@ void KeyboardImput::setPlayer(Player* p) { player = p; }
 
 void KeyboardImput::checkKeyboardImput()
 {
-	if (!sf::Keyboard::isKeyPressed)
-		return;
+
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		player->planNextTurn(0, -1, 270);

@@ -2,22 +2,32 @@
 
 void GameLogic::start()
 {
-	player = new Player(6);
-	map = new Map();
-	kI.setPlayer(player);
-	hitPoints = 3;
 
-	FileManager::readLevelsFile(levels, "resources/gameSettings/levels.txt");
+	winG.setMenu();
+	std::pair<bool, bool> menuChoices = winG.displayMenu();
+	
+	if(menuChoices.first)
+	{
+		player = new Player(6);
+		map = new Map();
+		kI.setPlayer(player);
 
-	prepareNextLevel();
-	setUpNextLevel();
+		if (menuChoices.second);
+			//LOAD GAME
 
-	++currentLevelIndex;
-	++nextLevelIndex;
+		hitPoints = 3;
+		FileManager::readLevelsFile(levels, "resources/gameSettings/levels.txt");
+		prepareNextLevel();
+		setUpNextLevel();
 
-	nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
-	run();
+		++currentLevelIndex;
+		++nextLevelIndex;
+		nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
+		
+		winG.setInfoPanel(0, 900, winG.width, winG.height - 900);
 
+		run();
+	}
 }
 
 void GameLogic::prepareNextLevel()
@@ -115,9 +125,12 @@ void GameLogic::run()
 		if (checkGameOverConditions())
 			deathProc();
 		if (hitPoints <= 0)
+		{
+			//winG.displayDefeatBox();
+			//TO BE REPLACED TO DO
 			winG.getWindow().close();
-
-		if (checkLevelCompletion())
+		}
+		else if (checkLevelCompletion())
 		{
 			++currentLevelIndex;
 			++nextLevelIndex;
@@ -131,8 +144,12 @@ void GameLogic::run()
 
 		calculateLogic();
 
+
 		winG.getWindow().clear();
-		drawEntities();
+		{
+			winG.displayInfoPanel(currentLevelIndex, hitPoints, map->getProggres(), levelInfo[1]);
+			drawEntities();
+		}
 		winG.getWindow().display();
 
 	}

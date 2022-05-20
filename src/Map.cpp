@@ -60,6 +60,7 @@ Map::Map()
 	wallImage.loadFromFile("resources/Wall.png");
 }
 
+
 std::array<int, 1620>& Map::getMapping() { return mapping; }
 
 int Map::getTileState(int index)

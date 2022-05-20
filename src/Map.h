@@ -14,7 +14,6 @@ class Map
 
 	sf::Image wallImage;
 
-
 	std::array<int, 1620> mapping;
 	void createBackground();
 
@@ -24,9 +23,7 @@ public:
 	const static int MAP_WIDTH_PIXELS = 1620; //in blocks
 	const static int MAP_HEIGHT_PIXELS = 900;//in blocks
 
-
 	const static int TILE_SIZE = 30; //in px
-
 
 	const static int WALL_TILE = 1;
 	const static int TAIL_TILE = 2;
@@ -52,6 +49,7 @@ public:
 	void resetMap();
 
 	bool isTileInOuterRing(int index);
+
 
 };
 

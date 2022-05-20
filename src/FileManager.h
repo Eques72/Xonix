@@ -5,6 +5,7 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <array>
+#include <regex>
 
 class FileManager
 {
@@ -63,8 +64,13 @@ public:
 		int aIndex = 0;
 
 		readFromFile(tmp, path);
-
 		tmp.shrink_to_fit();
+
+		if (!validateMap(tmp))
+			for (int q{ 0 }; q < tmp.size(); q++)
+				if (tmp[q] != '0' && tmp[q] != '1' && tmp[q] != ',')
+					tmp[q] = '0';
+			
 		for (int q{ 0 }; q < tmp.size(); q++)
 		{
 			switch (tmp[q])
@@ -80,8 +86,6 @@ public:
 			case ',':
 				break;
 			default:
-				a[aIndex] = 0;
-				++aIndex;
 				break;
 			}
 		}
@@ -90,8 +94,24 @@ public:
 	static void readLevelsFile(std::vector<std::string>& l, std::filesystem::path path)
 	{
 		readFromFile(l, path);
+
+		validateLevels(l);
 	}
 
+	static bool validateLevels(std::vector<std::string>& l)
+	{
+		std::regex r1("[0-9][0-9];");
+		std::regex r2("[0-9]{1,2};[(0-9]{2};[0-5];[0-5];[0-5];[0-5];[0-5];");
+		std::smatch mS;
+
+		if (std::regex_match(l[0], r1))
+		{
+			for (int q{ 0 }; q < std::stoi(l[0]); q++)
+				if (!std::regex_match(l[q + 1], r2))
+					return false;
+		}
+		return false;
+	}
 
 	static bool createFile(std::filesystem::path path, std::string name, std::string content)
 	{
@@ -119,6 +139,15 @@ public:
 			stream.close();
 			return true;
 		}
+		return false;
+	}
+
+	static bool validateMap(std::string mS)
+	{
+		std::regex r("[01,]+");
+
+		if(std::regex_match(mS, r))
+			return true;
 		return false;
 	}
 
