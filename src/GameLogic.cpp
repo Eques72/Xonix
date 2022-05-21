@@ -2,31 +2,40 @@
 
 void GameLogic::start()
 {
-
-	winG.setMenu();
-	std::pair<bool, bool> menuChoices = winG.displayMenu();
-	
-	if(menuChoices.first)
+	while (isMenuActive)
 	{
-		player = new Player(6);
-		map = new Map();
-		kI.setPlayer(player);
+		winG.setMenu();
+		std::array<bool, 3> menuChoices = winG.displayMenu();
+		isMenuActive = menuChoices[2];
+	
+		gameOver = false;
+		isPauseActive = false;
+		isDefeatBoxActive = false;
+		nextLevelIndex = 1;
+		currentLevelIndex = 0;
 
-		if (menuChoices.second);
+		if (menuChoices[0])
+		{
+			player = new Player(6);
+			map = new Map();
+			kI.setPlayer(player);
+
+			if (menuChoices[1]);
 			//LOAD GAME
 
-		hitPoints = 3;
-		FileManager::readLevelsFile(levels, "resources/gameSettings/levels.txt");
-		prepareNextLevel();
-		setUpNextLevel();
+			hitPoints = 3;
+			FileManager::readLevelsFile(levels, "resources/gameSettings/levels.txt");
+			prepareNextLevel();
+			setUpNextLevel();
 
-		++currentLevelIndex;
-		++nextLevelIndex;
-		nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
-		
-		winG.setInfoPanel(0, 900, winG.width, winG.height - 900);
+			++currentLevelIndex;
+			++nextLevelIndex;
+			nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
 
-		run();
+			winG.setInfoPanel(0, 900, winG.width, winG.height - 900);
+
+			run();
+		}
 	}
 }
 
@@ -94,7 +103,7 @@ void GameLogic::drawEntities()
 void GameLogic::calculateLogic()
 {
 
-	kI.checkKeyboardImput();
+
 	player->move(map);
 
 	std::vector<std::thread> threads;
@@ -115,46 +124,74 @@ void GameLogic::calculateLogic()
 
 void GameLogic::run()
 {
-	while (winG.getWindow().isOpen())
+	while (!gameOver && winG.getWindow().isOpen())
 	{
+
+
 		sf::Event event;
 		while (winG.getWindow().pollEvent(event))
 			if (event.type == sf::Event::Closed)
 				winG.getWindow().close();
 
-		if (checkGameOverConditions())
-			deathProc();
-		if (hitPoints <= 0)
+		///////////////////////////////////////////////////////////////////
+		kI.checkKeyboardImput(isPauseActive);
+		if (isPauseActive && winG.pasuseBoxInitialized == false)
 		{
-			//winG.displayDefeatBox();
-			//TO BE REPLACED TO DO
-			winG.getWindow().close();
-		}
-		else if (checkLevelCompletion())
-		{
-			++currentLevelIndex;
-			++nextLevelIndex;
-			if (hitPoints <= 5)
-				++hitPoints;
-
-			nextLevelLoader.join();
-			setUpNextLevel();
-			nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
+			winG.setPauseBox();
+			winG.pasuseBoxInitialized = true;
 		}
 
-		calculateLogic();
+		if (!isDefeatBoxActive && !isPauseActive)
+		{
 
+			if (checkGameOverConditions())
+				deathProc();
+			if (hitPoints <= 0)
+			{
+				winG.setDefeatBox();
+				isDefeatBoxActive = true;
+				//winG.displayDefeatBox();
+				//TO BE REPLACED TO DO
+				//winG.getWindow().close();
+			}
+			else if (checkLevelCompletion())
+			{
+				++currentLevelIndex;
+				++nextLevelIndex;
+				if (hitPoints <= 5)
+					++hitPoints;
 
+				nextLevelLoader.join();
+				setUpNextLevel();
+				nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
+			}
+
+			calculateLogic();
+		}
+		///////////////////////////////////////////////////////////////////
 		winG.getWindow().clear();
-		{
+		{		
 			winG.displayInfoPanel(currentLevelIndex, hitPoints, map->getProggres(), levelInfo[1]);
 			drawEntities();
+		
+			if (isDefeatBoxActive && !winG.displayTextBox())
+			{
+				isDefeatBoxActive = false;
+				gameOver = true;
+				if(nextLevelLoader.joinable())
+					nextLevelLoader.join();
+				nextLevelEnemies.clear();
+			}
+			if (isPauseActive && !winG.displayTextBox())
+			{
+				winG.pasuseBoxInitialized = false;
+				isPauseActive = false;
+			}
 		}
 		winG.getWindow().display();
 
 	}
 }
-
 
 bool GameLogic::checkGameOverConditions()
 {

@@ -6,6 +6,7 @@
 #include "InfoPanel.h"
 #include "Menu.h"
 #include "TextBox.h"
+#include "FileManager.h"
 
 /**
 *  Klasa zarz¹dza g³ównym oknem gry z wyko¿ystaniem biblioteki SFML
@@ -21,7 +22,6 @@ class GWindow
 	sf::Font font;
 	sf::Text Text;
 	
-
 	/**
 	* Funkcja ustawia podstawowe parametry okna.
 	* Podstawowo rozdzielczoœæ to 1400x800, liczba klatek to 60.
@@ -31,6 +31,8 @@ class GWindow
 	void setGameIcon();
 
 public:
+	bool pasuseBoxInitialized = false;
+
 	const static int width{ 1620 };
 	const static int height{ 1100 }; //{ 900 };
 	/*
@@ -39,12 +41,13 @@ public:
 	GWindow();
 
 	void setMenu();
-	std::pair<bool,bool> displayMenu();
+	std::array<bool, 3> displayMenu();
 
 	sf::RenderWindow& getWindow();
 
-	void displayDefeatBox();
-	void displayPauseBox();
+	void setDefeatBox();
+	void setPauseBox();
+	bool displayTextBox();
 
 	void setInfoPanel(int _x, int _y, int _w, int _h);
 	void displayInfoPanel(int level, int hp, double percent, double percent_needed);

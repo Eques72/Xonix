@@ -25,6 +25,10 @@
 class GameLogic
 {
 	bool gameOver = false;
+	bool isMenuActive = true;
+	bool isPauseActive = false;
+	bool isDefeatBoxActive = false;
+
 
 	Map* map;
 	Player* player;

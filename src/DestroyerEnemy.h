@@ -19,11 +19,5 @@ public:
 	std::pair<int, int> checkBlockInFront(Map* m, std::pair<int, int> vel);
 
 };
-
-
-
-
-
-
 #endif // !DESTROYER
 

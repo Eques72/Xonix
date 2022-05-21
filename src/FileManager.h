@@ -1,4 +1,5 @@
-#pragma once
+#ifndef F_MANAGER
+#define F_MANAGER
 
 #include <fstream>
 #include <filesystem>
@@ -6,57 +7,82 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 #include <regex>
+#include <iostream>
 
 class FileManager
 {
 public:
 
-	static sf::Image& openImage(std::filesystem::path path)
+	static void openImage(sf::Image& i, std::filesystem::path path)
 	{
-		sf::Image i;
-		i.loadFromFile(path.string());
-		return i;
+		try
+		{
+			if (!checkDir(path))
+				throw(std::string("Unable to find image under path: " + path.string() + " \n"));
+
+			i.loadFromFile(path.string());
+		}
+		catch (std::string& e)
+		{
+			std::cout << e;
+		}
+	}
+
+	static void openTTFfile(sf::Font& f, std::filesystem::path path)
+	{
+		try
+		{
+			if (!checkDir(path))
+				throw(std::string("Unable to find TTF file under path: " + path.string() + " \n"));
+
+			f.loadFromFile(path.string());
+		}
+		catch (std::string& e)
+		{
+			std::cout << e;
+		}
 	}
 
 	static void readFromFile(std::string& contener, std::filesystem::path path)
 	{
 		std::ifstream stream(path.string());
-		if (stream.is_open())
+		try
 		{
-			std::string tmp;
-			while (std::getline(stream, tmp))
-				contener += tmp;
+			if (!stream.is_open())
+				throw(std::string("Unable to read file from path: " + path.string() + "\n"));
 
-			stream.close();
+				std::string tmp;
+				while (std::getline(stream, tmp))
+					contener += tmp;
+
+				stream.close();
+		}
+		catch (std::string& e)
+		{
+			std::cout << e;
 		}
 	}
 
 	static void readFromFile(std::vector<std::string>& contener, std::filesystem::path path)
 	{
 		std::ifstream stream(path.string());
-		if (stream.is_open())
+		try
 		{
+			if (!stream.is_open())
+				throw(std::string("Unable to read file from path: " + path.string() + "\n"));
+
+
 			std::string tmp;
 			while (std::getline(stream, tmp))
 				contener.push_back(tmp);
 
 			stream.close();
+		}
+		catch (std::string& e)
+		{
+			std::cout << e;
 		}
 	}
-
-	/*template <typename T>
-	static void readFromFile(T& contener, std::filesystem::path path)
-	{
-		std::ifstream stream(path.string());
-		if(stream.is_open())
-		{
-			std::string tmp;
-			while (std::getline(stream, tmp))
-				contener.push_back(tmp);
-
-			stream.close();
-		}
-	}*/
 
 	static void readMapFile(std::array<int, 1620>& a, std::filesystem::path path)
 	{
@@ -95,7 +121,18 @@ public:
 	{
 		readFromFile(l, path);
 
-		validateLevels(l);
+		try 
+		{
+			if (!validateLevels(l))
+			{
+				std::string s{ "Can not read game settings properly, reinstall game \n" };
+				throw(s);
+			}
+		}
+		catch(std::string& e)
+		{
+			std::cout << e;
+		}
 	}
 
 	static bool validateLevels(std::vector<std::string>& l)
@@ -109,6 +146,8 @@ public:
 			for (int q{ 0 }; q < std::stoi(l[0]); q++)
 				if (!std::regex_match(l[q + 1], r2))
 					return false;
+
+			return true;
 		}
 		return false;
 	}
@@ -151,7 +190,6 @@ public:
 		return false;
 	}
 
-
 	static bool editFile(std::filesystem::path path, std::string content)
 	{
 		if (std::filesystem::exists(path.string()))
@@ -184,3 +222,5 @@ public:
 		return false;
 	}
 };
+
+#endif //F_MANAGER

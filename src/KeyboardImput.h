@@ -15,6 +15,6 @@ public:
 
 	void setPlayer(Player* p);
 
-	void checkKeyboardImput();
+	void checkKeyboardImput(bool& activatePause);
 };
 #endif // !KEYBOARD

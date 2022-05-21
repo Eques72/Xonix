@@ -1,0 +1,43 @@
+#include "Button.h"
+
+Button::Button(int _x, int _y, sf::Color c, std::string _label)
+	: x(_x), y(_y), color(c), label(_label)
+{
+	FileManager::openImage(img, "resources/button.png");
+	tx.loadFromImage(img);
+
+	bodyButton.setColor(color);
+	bodyButton.setPosition(sf::Vector2f(x, y));
+	bodyButton.setTexture(tx);
+
+
+	FileManager::openTTFfile(f, "resources/DIGIB.TTF");
+	buttonText.setFont(f);
+	buttonText.setString(label);
+	buttonText.setCharacterSize(55);
+	buttonText.setFillColor(sf::Color(169, 179, 186));
+	buttonText.setStyle(sf::Text::Bold);
+
+	//center text
+	sf::FloatRect textRect = buttonText.getLocalBounds();
+	buttonText.setOrigin(textRect.width / 2, textRect.height / 2);
+	buttonText.setPosition(sf::Vector2f(x + width / 2, y + (3 * height / 8)));
+};
+
+void Button::displayButton(sf::RenderWindow& win)
+{
+	win.draw(bodyButton);
+	win.draw(buttonText);
+}
+
+bool Button::checkIfButtonPressed(sf::RenderWindow& win)
+{
+	if (active && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		sf::Vector2i mPos = sf::Mouse::getPosition(win);
+		//AABB
+		if (mPos.x >= x && mPos.x <= x + width && mPos.y >= y && mPos.y <= y + height)
+			return true;
+	}
+	return false;
+}

@@ -49,5 +49,5 @@ void InfoPanel::setUpText(sf::Text& t, int offset_x)
 
 void InfoPanel::setUpFont(sf::Font& f) 
 {
-	f.loadFromFile("resources/DIGIB.TTF");
+	FileManager::openTTFfile(f, "resources/DIGIB.TTF");
 }

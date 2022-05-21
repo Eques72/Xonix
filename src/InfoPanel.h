@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "FileManager.h"
 
 
 class InfoPanel

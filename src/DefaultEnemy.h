@@ -14,5 +14,4 @@ public:
 	bool changeDirection(int param) override;
 };
 
-
 #endif // !GUARD

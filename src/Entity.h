@@ -5,7 +5,7 @@
 
 #include "Animation.h"
 #include "Map.h"
-
+#include "FileManager.h"
 
 
 class Entity

@@ -12,7 +12,7 @@ void GWindow::config()
 void GWindow::setGameIcon()
 {
 	sf::Image icon;
-	icon.loadFromFile("resources/Logo.png");
+	FileManager::openImage(icon, "resources/Logo.png");
 	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 }
 
@@ -29,9 +29,9 @@ void GWindow::setMenu()
 	menu = std::make_unique<Menu>();
 }
 
-std::pair<bool, bool> GWindow::displayMenu()
+std::array<bool, 3> GWindow::displayMenu()
 {
-	std::pair<int, int> choices;
+	std::array<bool, 3> choices{0,0,0};
 	while (window.isOpen() && menu->getStatus() != 0)
 	{
 		sf::Event event;
@@ -64,22 +64,26 @@ void GWindow::displayInfoPanel(int level, int hp, double percent, double percent
 }
 
 
-void GWindow::displayDefeatBox()
+void GWindow::setDefeatBox() 
 {
-	tB = std::make_unique<TextBox>(width / 2 - 300, height/2 - 300, 600, 600, "You Loose!", "press back to return to menu");
+	tB = std::make_unique<TextBox>(width / 2 - 400, height / 2 - 350, 800, 500, "You Lose!", "press back to return to menu");
 	tB->turnFrame(true);
-	tB->displayTextBox(this->window);
-	tB->waitForKeyLoop(this->window);
+}
+void GWindow::setPauseBox() 
+{
+	tB = std::make_unique<TextBox>(width / 2 - 200, height / 2 - 300, 400, 400, "Pause", " ");
+	tB->turnFrame(false);
 
-	tB.release();
 }
 
-void GWindow::displayPauseBox()
+bool GWindow::displayTextBox()
 {
-	tB = std::make_unique<TextBox>(width / 2 - 200, height / 2 - 200, 400, 400, "Pause", " ");
-	tB->turnFrame(false);
 	tB->displayTextBox(this->window);
-	tB->waitForKeyLoop(this->window);
 
-	tB.release();
+	if (!tB->waitForButton(this->window))
+	{
+		tB.release();
+		return false;
+	}
+	return true;
 }

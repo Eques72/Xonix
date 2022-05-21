@@ -3,8 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <array>
-#include "FileManager.h"
 #include <ranges>
+#include "FileManager.h"
+
 
 class Map
 {

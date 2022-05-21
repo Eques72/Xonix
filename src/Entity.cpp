@@ -3,7 +3,7 @@
 
 void Entity::loadTextures(std::string path)
 {
-	imageWithTexture.loadFromFile(path);
+	FileManager::openImage(imageWithTexture,path);
 	texture.loadFromImage(imageWithTexture);
 	body.setTexture(texture);
 	body.setTextureRect(sf::IntRect(0, 0, ENTITY_RADIUS * 2, ENTITY_RADIUS * 2));

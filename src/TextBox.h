@@ -1,11 +1,12 @@
 #ifndef TEXT_BOX
 #define TEXT_BOX
 
-
+#include <vector>
 #include <string>
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include "Button.h"
+#include "FileManager.h"
 
 
 class TextBox
@@ -18,6 +19,8 @@ class TextBox
 
 	bool useFrame{ true };
 	sf::RectangleShape frame;
+
+	bool isActive = true;
 public:
 
 	TextBox(int _x, int _y, int _w, int _h, std::string _text, std::string _subtext);
@@ -26,7 +29,7 @@ public:
 
 	void displayTextBox(sf::RenderWindow& win);
 
-	void waitForKeyLoop(sf::RenderWindow& win);
+	bool waitForButton(sf::RenderWindow& win);
 };
 
 

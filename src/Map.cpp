@@ -2,9 +2,9 @@
 
 void Map::createBackground()
 {
-	backgroundImage.loadFromFile("resources/BgPic.png");
+	FileManager::openImage(backgroundImage, "resources/BgPic.png");
+	
 	backgroundTexture.loadFromImage(backgroundImage);
-
 	backgroundSprite.setTexture(backgroundTexture);
 	backgroundSprite.setPosition(sf::Vector2f(0.f, 0.f));
 }
@@ -57,7 +57,8 @@ void Map::draw(sf::RenderWindow& win) const
 Map::Map()
 {
 	createBackground();
-	wallImage.loadFromFile("resources/Wall.png");
+
+	FileManager::openImage(wallImage, "resources/Wall.png");
 }
 
 

@@ -22,15 +22,6 @@ public:
 	/// </summary>
 	bool changeDirection(int param) override;
 
-	void trackNewTail(Map* m);
-
-	/// <summary>
-	/// Calculates coordinates in pixels of certain block by given this block's index as a parameter
-	/// </summary>
-	/// <param name="index">Index of given block</param>
-	/// <returns>Returns x,y coordinates in px</returns>
-	std::pair<int, int> calculateTailCoordinates(int index);
-
 	void calmDown();
 
 };
