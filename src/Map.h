@@ -5,7 +5,7 @@
 #include <array>
 #include <ranges>
 #include "FileManager.h"
-
+#include "Animation.h"
 
 class Map
 {
@@ -14,6 +14,7 @@ class Map
 	sf::Sprite backgroundSprite;
 
 	sf::Image wallImage;
+	sf::Image tailImage;
 
 	std::array<int, 1620> mapping;
 	void createBackground();

@@ -1,6 +1,7 @@
 #ifndef HUNT
 #define HUNT
 
+#include <memory>
 #include "Enemy.h"
 #include "Player.h"
 
@@ -8,14 +9,14 @@ class HunterEnemy : public Enemy
 {
 	int indexLatestTailPiece = -1;
 
-	Player* victim = nullptr;
+	std::shared_ptr<Player> victim;
 	std::pair<int, int> spawnPoint;
 
 public:
 
-	HunterEnemy(float _x, float _y, int sp, int type, Player* p);
+	HunterEnemy(float _x, float _y, int sp, int type, std::shared_ptr<Player> p);
 
-	void move(Map* map) override;
+	void move(Map& map) override;
 
 	/// <summary>
 	/// Function useless in this context

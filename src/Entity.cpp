@@ -11,7 +11,7 @@ void Entity::loadTextures(std::string path)
 
 Entity::Entity(int s) : speed(s)
 {
-	animation = new Animation(2, 2, texture);
+	animation = std::make_unique<Animation>(2, 2, texture);
 }
 
 void Entity::draw(sf::RenderWindow& win)
@@ -47,18 +47,22 @@ std::pair<int, int> Entity::getRside()
 	return { x,y };
 };
 
-bool Entity::chcekEntityCollions(Entity* e)
+bool Entity::chcekEntityCollions(Entity& e)
 {
-	if ((this->getLside().first < e->getLside().first && this->getRside().first > e->getLside().first)
-		|| (this->getLside().first < e->getRside().first && this->getRside().first > e->getRside().first)) //check X axis
-		if ((this->getDside().second > e->getDside().second && this->getUside().second < e->getDside().second)
-			|| (this->getDside().second > e->getUside().second && this->getUside().second < e->getUside().second)) //check Y axis			
-			return true;
+	//if ((this->getLside().first < e->getLside().first && this->getRside().first > e->getLside().first)
+	//	|| (this->getLside().first < e->getRside().first && this->getRside().first > e->getRside().first)) //check X axis
+	//	if ((this->getDside().second > e->getDside().second && this->getUside().second < e->getDside().second)
+	//		|| (this->getDside().second > e->getUside().second && this->getUside().second < e->getUside().second)) //check Y axis			
+	if ((this->getLside().first < e.getLside().first && this->getRside().first > e.getLside().first)
+		|| (this->getLside().first < e.getRside().first && this->getRside().first > e.getRside().first)) //check X axis
+		if ((this->getDside().second > e.getDside().second && this->getUside().second < e.getDside().second)
+			|| (this->getDside().second > e.getUside().second && this->getUside().second < e.getUside().second)) //check Y axis			
+				return true;
 
 	return false;
 };
 
-bool Entity::checkTailCollisons(Map* map)
+bool Entity::checkTailCollisons(Map& map)
 {
 	std::pair<int, int> vert = { 0,0 };
 	std::pair<int, int> horiz = { 0,0 };
@@ -96,7 +100,7 @@ bool Entity::checkTailCollisons(Map* map)
 		int Y = (vert.second - vert.second % Map::TILE_SIZE) / Map::TILE_SIZE;
 		int index = X + Y * Map::MAP_WIDTH;
 
-		int tileType = map->getTileState(index);
+		int tileType = map.getTileState(index);
 		if (tileType == Map::TAIL_TILE)
 			return true;
 
@@ -107,7 +111,7 @@ bool Entity::checkTailCollisons(Map* map)
 		int index = (horiz.first - horiz.first % Map::TILE_SIZE) / Map::TILE_SIZE
 			+ (Map::MAP_WIDTH * ((horiz.second - horiz.second % Map::TILE_SIZE) / Map::TILE_SIZE));
 
-		int tileType = map->getTileState(index);
+		int tileType = map.getTileState(index);
 		if (tileType == Map::TAIL_TILE)
 			return true;
 

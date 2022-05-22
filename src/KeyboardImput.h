@@ -1,19 +1,20 @@
 #ifndef KEYBOARD
 #define KEYBOARD
 
+#include <memory>
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 
 class KeyboardImput
 {
-	Player* player = nullptr;
+	std::shared_ptr<Player> player;
 
 public:
 
 	KeyboardImput() {};
-	KeyboardImput(Player* p);
+	KeyboardImput(std::shared_ptr<Player> p);
 
-	void setPlayer(Player* p);
+	void setPlayer(std::shared_ptr<Player> p);
 
 	void checkKeyboardImput(bool& activatePause);
 };

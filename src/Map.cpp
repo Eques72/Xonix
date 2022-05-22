@@ -59,6 +59,7 @@ Map::Map()
 	createBackground();
 
 	FileManager::openImage(wallImage, "resources/Wall.png");
+//	FileManager::openImage(wallImage, "resources/Tail.png");
 }
 
 

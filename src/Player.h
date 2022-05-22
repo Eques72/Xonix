@@ -18,45 +18,30 @@ class Player : public Entity
 		float nextRotation = 0;
 	};
 
-	class Tail
+	nextMove nM;
+	bool conquestPossible = false;
+	bool playerEntered = false;
+
+	void drop(Map& map, int XY); //wype³nia plamami miejsca puste z którymi maj¹ styccznoœæ przeciwnicy
+
+
+
+	bool checkPlayerState(int state)
 	{
-		Player* head;
-		bool playerEntered = false;
-
-	public:
-		Tail(Player* p) : head(p) {}
-
-		bool checkPlayerState(int state)
+		if (playerEntered == 0 && state == Map::EMPTY_TILE)
 		{
-			if (playerEntered == 0 && state == Map::EMPTY_TILE)
-			{
-				playerEntered = 1;
-				return 0;
-			}
-			else if (playerEntered == 1 && state == Map::WALL_TILE)
-			{
-				playerEntered = 0;
-				return 1;
-			}
+			playerEntered = 1;
 			return 0;
 		}
-	};
-
-	nextMove nM;
-	Tail* tail;
-	bool conquestPossible = false;
-
-
-	void drop(Map* map, int XY); //wype³nia plamami miejsca puste z którymi maj¹ styccznoœæ przeciwnicy
-
+		else if (playerEntered == 1 && state == Map::WALL_TILE)
+		{
+			playerEntered = 0;
+			return 1;
+		}
+		return 0;
+	}
 
 
-
-
-	/**
-	* Konstruktor iniclalizuj¹cy startowe parametry postaci oraz tworz¹cy dynamiczne obiekty
-	*/
-	Player(int s);
 
 	void revivePlayer();
 
@@ -64,7 +49,7 @@ class Player : public Entity
 	* Funkcja ujmuj¹ca wszystkie aspekty poruszania siê postaci wywo³uj¹ca inne wyspecjalizowane wynkcje
 	* oraz obliczaj¹ca podstawowe parametry poruszania
 	*/
-	void move(Map* map) override;
+	void move(Map& map) override;
 
 	/**
 	* Funkcja zapewniaj¹ca ¿e postaæ obróci siê w najbli¿szym mo¿liwym momencie,
@@ -91,18 +76,17 @@ class Player : public Entity
 
 	bool getConquestState();
 
-	void conquer(Map* map, std::vector<int> positions);
-
-	/**
-	* Destruktor
-	*/
-	~Player();
-
+	void conquer(Map& map, std::vector<int> positions);
 
 	friend class GameLogic;
 	friend class KeyboardImput;
 
 public:
+
+	/**
+	* Konstruktor iniclalizuj¹cy startowe parametry postaci oraz tworz¹cy dynamiczne obiekty
+	*/
+	Player(int s);
 
 	std::pair<int, int> getPositionPx();
 
@@ -112,8 +96,7 @@ public:
 	* Wywo³ywana w Player::move() tylko kiedy œrodek wchodzi na nowy obszar(pole)
 	* Zwraca okreœlany numerycznie typ pola pod postaci¹
 	*/
-	std::pair<int, int> checkTileBellow(Map* map);
-
+	std::pair<int, int> checkTileBellow(Map& map);
 };
 
 #endif // !PLAYER

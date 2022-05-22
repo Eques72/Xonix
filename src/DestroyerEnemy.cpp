@@ -30,7 +30,7 @@ DestroyerEnemy::DestroyerEnemy(float _x, float _y, int sp, int type) :Enemy(sp, 
 	body.setPosition(sf::Vector2f(_X(generator), _Y(generator)));
 }
 
-void DestroyerEnemy::move(Map* map)
+void DestroyerEnemy::move(Map& map)
 {
 	std::pair<int, int> oldVeclocity = velocity;
 
@@ -40,12 +40,12 @@ void DestroyerEnemy::move(Map* map)
 	else
 	{
 		std::pair<int, int> tileInfo = checkBlockInFront(map, oldVeclocity);
-		if (tileInfo.first == Map::WALL_TILE && map->isTileInOuterRing(tileInfo.second) == false)
-			map->changeTileState(tileInfo.second, Map::EMPTY_TILE);
+		if (tileInfo.first == Map::WALL_TILE && map.isTileInOuterRing(tileInfo.second) == false)
+			map.changeTileState(tileInfo.second, Map::EMPTY_TILE);
 	}
 }
 
-std::pair<int, int> DestroyerEnemy::checkBlockInFront(Map* m, std::pair<int, int> vel)
+std::pair<int, int> DestroyerEnemy::checkBlockInFront(Map& m, std::pair<int, int> vel)
 {
 	sf::Vector2f pos = body.getPosition();
 	pos.x += speed * vel.first;
@@ -64,7 +64,7 @@ std::pair<int, int> DestroyerEnemy::checkBlockInFront(Map* m, std::pair<int, int
 	int Y = ((int)pos.y - (int)pos.y % Map::TILE_SIZE) / Map::TILE_SIZE;
 	int index = X + Y * Map::MAP_WIDTH;
 
-	int tileType = m->getTileState(index);
+	int tileType = m.getTileState(index);
 
 	return std::make_pair(tileType, index);
 }

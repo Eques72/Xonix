@@ -32,6 +32,7 @@ class GWindow
 
 public:
 	bool pasuseBoxInitialized = false;
+	bool demandCredits = false;
 
 	const static int width{ 1620 };
 	const static int height{ 1100 }; //{ 900 };
@@ -47,11 +48,11 @@ public:
 
 	void setDefeatBox();
 	void setPauseBox();
-	bool displayTextBox();
+	void setVictoryBox();
+	std::pair<bool, int> displayTextBox();
 
 	void setInfoPanel(int _x, int _y, int _w, int _h);
 	void displayInfoPanel(int level, int hp, double percent, double percent_needed);
-
 };
 
 #endif //G_WINDOW

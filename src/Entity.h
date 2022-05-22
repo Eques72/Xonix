@@ -1,12 +1,12 @@
 #ifndef ENTITY
 #define ENTITY
 
+#include <memory>
 #include <SFML/Graphics.hpp>
 
 #include "Animation.h"
 #include "Map.h"
 #include "FileManager.h"
-
 
 class Entity
 {
@@ -18,7 +18,7 @@ protected:
 	sf::Texture texture;
 	sf::Sprite body;
 
-	Animation* animation;
+	std::unique_ptr<Animation> animation;
 	Entity() = delete;
 
 	void loadTextures(std::string path);
@@ -26,9 +26,10 @@ protected:
 public:
 
 	constexpr static int ENTITY_RADIUS = 15;
+	
 	Entity(int s);
 
-	virtual void move(Map* map) = 0;
+	virtual void move(Map& map) = 0;
 
 	void draw(sf::RenderWindow& win);
 
@@ -37,14 +38,9 @@ public:
 	std::pair<int, int> getLside();
 	std::pair<int, int> getRside();
 
-	bool chcekEntityCollions(Entity* e);
+	bool chcekEntityCollions(Entity& e);
 
-	bool checkTailCollisons(Map* map);
+	bool checkTailCollisons(Map& map);
 
-
-	~Entity() { delete animation; }
 };
-
-
-
 #endif // !ENTITY

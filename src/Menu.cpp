@@ -2,6 +2,8 @@
 
 Menu::Menu()
 {
+	waitFunction();
+
 	buttons[0] = std::make_unique<Button>((width / 2 - 300 - 50), height / 2 - 25 - 150, sf::Color(113, 114, 168), "Start");
 	buttons[1] = std::make_unique<Button>((width / 2 + 50), height / 2 - 25 - 150, sf::Color(113, 114, 168), "Continue");
 	buttons[2] = std::make_unique<Button>((width / 2 - 300 - 50), height / 2 + 25, sf::Color(113, 114, 168), "Credits");
@@ -51,7 +53,7 @@ void Menu::displayMenu(sf::RenderWindow& win)
 
 std::array<bool, 3> Menu::menuLogic(sf::RenderWindow& win)
 {
-	if (buttons[0]->checkIfButtonPressed(win))
+	if (buttons[0]->checkIfButtonPressed(win)) //START
 	{
 		buttons[0]->setInactive();
 		menuChoices[0] = true;
@@ -59,22 +61,23 @@ std::array<bool, 3> Menu::menuLogic(sf::RenderWindow& win)
 		menuChoices[2] = true;
 		status = 0;
 	}
-	if (buttons[1]->checkIfButtonPressed(win))
+	if (buttons[1]->checkIfButtonPressed(win))  //CONTINUE
 	{
 		buttons[1]->setInactive();
 		menuChoices[0] = true;
-		menuChoices[1] = false;
-		menuChoices[0] = true;
+		menuChoices[1] = true;
+		menuChoices[2] = true;
 		status = 0;
 	}
-	if (buttons[2]->checkIfButtonPressed(win))
+	if (buttons[2]->checkIfButtonPressed(win) || demandedCredits) //CREDITS
 	{
+		demandedCredits = false;
 		for (size_t i{ 0 }; i < buttons.size() - 1; i++)
 			buttons[i]->setInactive();
 		buttons[4]->setActive();
 		status = 2;
 	}
-	if (buttons[3]->checkIfButtonPressed(win))
+	if (buttons[3]->checkIfButtonPressed(win)) //EXIT
 	{
 		buttons[3]->setInactive();
 		menuChoices[0] = false;
@@ -82,7 +85,7 @@ std::array<bool, 3> Menu::menuLogic(sf::RenderWindow& win)
 		menuChoices[2] = false;
 		status = 0;
 	}
-	if (buttons[4]->checkIfButtonPressed(win))
+	if (buttons[4]->checkIfButtonPressed(win)) //BACK
 	{
 		buttons[4]->setInactive();
 		status = 1;
@@ -118,4 +121,19 @@ void Menu::displayCredits(sf::RenderWindow& win)
 	win.draw(creditsText);
 
 	buttons[4]->displayButton(win);
+}
+
+void Menu::waitFunction() 
+{
+	bool hold = true;
+	timeStamp = std::chrono::steady_clock::now();
+
+	while (hold)
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - timeStamp) >= holdTime)
+			hold = false;
+}
+
+void Menu::checkForDemand(bool creditsNeeded) 
+{
+	demandedCredits = creditsNeeded;
 }

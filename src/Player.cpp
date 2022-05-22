@@ -6,16 +6,15 @@ Player::Player(int s) : Entity(s)
 	velocity = std::make_pair(0, 0);
 	body.setOrigin(15, 15);
 	body.setPosition(sf::Vector2f(0, 0));
-	tail = new Tail(this);
 }
 
-void Player::drop(Map* map, int XY)
+void Player::drop(Map& map, int XY)
 {
-	if (map->getTileState(XY) == 0) map->changeTileState(XY, -1);
-	if (map->getTileState(XY - Map::MAP_WIDTH) == 0) drop(map, XY - Map::MAP_WIDTH);
-	if (map->getTileState(XY + Map::MAP_WIDTH) == 0) drop(map, XY + Map::MAP_WIDTH);
-	if (map->getTileState(XY - 1) == 0) drop(map, XY - 1);
-	if (map->getTileState(XY + 1) == 0) drop(map, XY + 1);
+	if (map.getTileState(XY) == 0) map.changeTileState(XY, -1);
+	if (map.getTileState(XY - Map::MAP_WIDTH) == 0) drop(map, XY - Map::MAP_WIDTH);
+	if (map.getTileState(XY + Map::MAP_WIDTH) == 0) drop(map, XY + Map::MAP_WIDTH);
+	if (map.getTileState(XY - 1) == 0) drop(map, XY - 1);
+	if (map.getTileState(XY + 1) == 0) drop(map, XY + 1);
 }
 
 
@@ -24,10 +23,10 @@ void Player::revivePlayer()
 	velocity = std::make_pair(0, 0);
 	body.setPosition(sf::Vector2f(0, 0));
 	body.setRotation(0);
-	tail = new Tail(this);
+	playerEntered = false;
 }
 
-void Player::move(Map* map)
+void Player::move(Map& map)
 {
 	sf::Vector2f oldPos = body.getPosition();
 
@@ -44,8 +43,8 @@ void Player::move(Map* map)
 		std::pair<int, int> tileInfo = checkTileBellow(map);
 
 		if (tileInfo.second == Map::EMPTY_TILE)
-			map->changeTileState(tileInfo.first, Map::TAIL_TILE);
-		conquestPossible = tail->checkPlayerState(tileInfo.second);
+			map.changeTileState(tileInfo.first, Map::TAIL_TILE);
+		conquestPossible = checkPlayerState(tileInfo.second);
 	}
 
 
@@ -73,13 +72,13 @@ int Player::checkCollisons(sf::Vector2f pos)
 
 }
 
-std::pair<int, int> Player::checkTileBellow(Map* map)
+std::pair<int, int> Player::checkTileBellow(Map& map)
 {
 	int X = ((int)body.getPosition().x - 3) / Map::TILE_SIZE; //int used deliberately
 	int Y = ((int)body.getPosition().y - 3) / Map::TILE_SIZE; //int used deliberately
 
 	int indexXY = (int)(X + (Y * Map::MAP_WIDTH));
-	int tileType = map->getTileState(indexXY);
+	int tileType = map.getTileState(indexXY);
 
 	return std::make_pair(indexXY, tileType);
 }
@@ -98,12 +97,12 @@ void Player::rotate(float angle)
 
 bool Player::getConquestState() { return conquestPossible; }
 
-void Player::conquer(Map* map, std::vector<int> positions)
+void Player::conquer(Map& map, std::vector<int> positions)
 {
 	for (auto a : positions)
 		drop(map, a);
 
-	map->fillEmptySpace();
+	map.fillEmptySpace();
 
 	conquestPossible = false;
 }
@@ -114,7 +113,3 @@ std::pair<int, int> Player::getPositionPx()
 	int y = body.getPosition().y;
 	return std::make_pair(x, y);
 }
-
-
-
-Player::~Player() { delete tail; }

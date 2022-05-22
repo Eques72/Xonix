@@ -22,7 +22,7 @@ DefaultEnemy::DefaultEnemy(float _x, float _y, int sp, int type) :Enemy(sp, type
 	body.setPosition(sf::Vector2f(_X(generator), _Y(generator)));
 }
 
-void DefaultEnemy::move(Map* map)
+void DefaultEnemy::move(Map& map)
 {
 	if (!changeDirection(checkWallCollisons(map)))
 		body.setPosition(sf::Vector2f(body.getPosition().x + (speed * velocity.first),

@@ -32,7 +32,7 @@ void Button::displayButton(sf::RenderWindow& win)
 
 bool Button::checkIfButtonPressed(sf::RenderWindow& win)
 {
-	if (active && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if (active && sf::Mouse::isButtonPressed(sf::Mouse::Left) && win.hasFocus())
 	{
 		sf::Vector2i mPos = sf::Mouse::getPosition(win);
 		//AABB

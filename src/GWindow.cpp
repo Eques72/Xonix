@@ -27,6 +27,8 @@ sf::RenderWindow& GWindow::getWindow() { return window; }
 void GWindow::setMenu() 
 {
 	menu = std::make_unique<Menu>();
+	menu->checkForDemand(this->demandCredits);
+	demandCredits = false;
 }
 
 std::array<bool, 3> GWindow::displayMenu()
@@ -63,6 +65,12 @@ void GWindow::displayInfoPanel(int level, int hp, double percent, double percent
 	iP->drawInfo(this->window);
 }
 
+void GWindow::setVictoryBox()
+{
+	tB = std::make_unique<TextBox>(width / 2 - 600, height / 2 - 350, 1200, 500, "Congratulations!", "You have won the game :D", "To credits");
+	tB->turnFrame(true);
+	tB->fillFrame(true);
+}
 
 void GWindow::setDefeatBox() 
 {
@@ -71,19 +79,20 @@ void GWindow::setDefeatBox()
 }
 void GWindow::setPauseBox() 
 {
-	tB = std::make_unique<TextBox>(width / 2 - 200, height / 2 - 300, 400, 400, "Pause", " ");
+	tB = std::make_unique<TextBox>(width / 2 - 350, height / 2 - 300, 700, 400, "Pause", " ", "Back", "Save & Quit");
 	tB->turnFrame(false);
-
 }
 
-bool GWindow::displayTextBox()
+std::pair<bool, int> GWindow::displayTextBox()
 {
 	tB->displayTextBox(this->window);
 
-	if (!tB->waitForButton(this->window))
+	std::pair respond = tB->waitForButton(this->window);
+	if (!respond.first)
 	{
 		tB.release();
-		return false;
+
+		return std::make_pair(false, respond.second);
 	}
-	return true;
+	return std::make_pair(true, respond.second);
 }

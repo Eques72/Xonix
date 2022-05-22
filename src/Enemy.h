@@ -16,7 +16,7 @@ protected:
 
 	virtual bool changeDirection(int param) = 0;
 
-	int checkWallCollisons(Map* map);
+	int checkWallCollisons(Map& map);
 
 public:
 	int getIndexOfTile();

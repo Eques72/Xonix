@@ -5,32 +5,37 @@ void GameLogic::start()
 	while (isMenuActive)
 	{
 		winG.setMenu();
+
 		std::array<bool, 3> menuChoices = winG.displayMenu();
 		isMenuActive = menuChoices[2];
 	
 		gameOver = false;
 		isPauseActive = false;
 		isDefeatBoxActive = false;
-		nextLevelIndex = 1;
-		currentLevelIndex = 0;
+		nextLevelIndex = 2;
+		currentLevelIndex =1;
 
 		if (menuChoices[0])
 		{
-			player = new Player(6);
-			map = new Map();
+			player = std::make_shared<Player>(6);
+			map = std::make_unique<Map>();
 			kI.setPlayer(player);
-
-			if (menuChoices[1]);
-			//LOAD GAME
-
 			hitPoints = 3;
-			FileManager::readLevelsFile(levels, "resources/gameSettings/levels.txt");
-			prepareNextLevel();
+			
+			std::thread readThread(FileManager::readLevelsFile, std::ref(levels), "resources/gameSettings/levels.txt");
+
+			if (menuChoices[1])
+				loadGame();
+			
+	//		FileManager::readLevelsFile(levels, "resources/gameSettings/levels.txt");
+			readThread.join();
+			prepareNextLevel(currentLevelIndex);
 			setUpNextLevel();
 
-			++currentLevelIndex;
-			++nextLevelIndex;
-			nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
+//			++currentLevelIndex;
+//			++nextLevelIndex;
+			if(currentLevelIndex < 20)
+				nextLevelLoader = std::thread(&GameLogic::prepareNextLevel,  this, nextLevelIndex);
 
 			winG.setInfoPanel(0, 900, winG.width, winG.height - 900);
 
@@ -39,9 +44,10 @@ void GameLogic::start()
 	}
 }
 
-void GameLogic::prepareNextLevel()
+void GameLogic::prepareNextLevel(int lvlIndex)
 {
-	getLevelInformation(nextLevelIndex);
+//	getLevelInformation(nextLevelIndex);
+	getLevelInformation(lvlIndex);
 
 	for (int q = 0; q < nextLevelInfo[2]; q++)
 		nextLevelEnemies.push_back(std::make_shared<DefaultEnemy>(500 + q * 30, 500, 3, 1));
@@ -104,7 +110,7 @@ void GameLogic::calculateLogic()
 {
 
 
-	player->move(map);
+	player->move(*map);
 
 	std::vector<std::thread> threads;
 
@@ -113,10 +119,10 @@ void GameLogic::calculateLogic()
 		std::vector<int> t;
 		for (int q = 0; q < enemies.size(); q++)
 			t.push_back(enemies[q]->getIndexOfTile());
-		player->conquer(map, t);
+		player->conquer(*map, t);
 	}
 	for (int q = 0; q < enemies.size(); q++)
-		threads.emplace_back(&Enemy::move, enemies[q].get(), std::ref(map));
+		threads.emplace_back(&Enemy::move, enemies[q].get(), std::ref(*map));
 	for (auto& t : threads)
 		t.join();
 }
@@ -131,8 +137,10 @@ void GameLogic::run()
 		sf::Event event;
 		while (winG.getWindow().pollEvent(event))
 			if (event.type == sf::Event::Closed)
+			{
+				saveGame();
 				winG.getWindow().close();
-
+			}
 		///////////////////////////////////////////////////////////////////
 		kI.checkKeyboardImput(isPauseActive);
 		if (isPauseActive && winG.pasuseBoxInitialized == false)
@@ -141,7 +149,7 @@ void GameLogic::run()
 			winG.pasuseBoxInitialized = true;
 		}
 
-		if (!isDefeatBoxActive && !isPauseActive)
+		if (!isDefeatBoxActive && !isPauseActive && !isGameCompleted)
 		{
 
 			if (checkGameOverConditions())
@@ -150,9 +158,6 @@ void GameLogic::run()
 			{
 				winG.setDefeatBox();
 				isDefeatBoxActive = true;
-				//winG.displayDefeatBox();
-				//TO BE REPLACED TO DO
-				//winG.getWindow().close();
 			}
 			else if (checkLevelCompletion())
 			{
@@ -161,9 +166,18 @@ void GameLogic::run()
 				if (hitPoints <= 5)
 					++hitPoints;
 
-				nextLevelLoader.join();
-				setUpNextLevel();
-				nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
+				if (currentLevelIndex <= maxLevels)
+				{
+					nextLevelLoader.join();
+					setUpNextLevel();
+					//	nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this);
+					nextLevelLoader = std::thread(&GameLogic::prepareNextLevel, this, nextLevelIndex);
+				}
+				else
+				{
+					isGameCompleted = true;
+					winG.setVictoryBox();
+				}
 			}
 
 			calculateLogic();
@@ -174,18 +188,39 @@ void GameLogic::run()
 			winG.displayInfoPanel(currentLevelIndex, hitPoints, map->getProggres(), levelInfo[1]);
 			drawEntities();
 		
-			if (isDefeatBoxActive && !winG.displayTextBox())
+			if ((isDefeatBoxActive || isGameCompleted) && !winG.displayTextBox().first)
 			{
 				isDefeatBoxActive = false;
+				isGameCompleted = false;
 				gameOver = true;
+				currentLevelIndex = 1;
+				nextLevelIndex = 2;
+				hitPoints = 3;
+				saveGame();
+
 				if(nextLevelLoader.joinable())
 					nextLevelLoader.join();
 				nextLevelEnemies.clear();
+
+				winG.demandCredits = true;
 			}
-			if (isPauseActive && !winG.displayTextBox())
+			if (isPauseActive)
 			{
-				winG.pasuseBoxInitialized = false;
-				isPauseActive = false;
+				std::pair response = winG.displayTextBox();
+				if (!response.first)
+				{
+					if (response.second == 1)
+					{
+						gameOver = true;
+						if (nextLevelLoader.joinable())
+							nextLevelLoader.join();
+						nextLevelEnemies.clear();
+
+						saveGame();
+					}
+					winG.pasuseBoxInitialized = false;
+					isPauseActive = false;
+				}
 			}
 		}
 		winG.getWindow().display();
@@ -195,15 +230,15 @@ void GameLogic::run()
 
 bool GameLogic::checkGameOverConditions()
 {
-	if (player->checkTailCollisons(map))
+	if (player->checkTailCollisons(*map))
 		return true;
 
 	for (int q = 0; q < enemies.size(); q++)
-		if (enemies[q]->checkTailCollisons(map))
+		if (enemies[q]->checkTailCollisons(*map))
 			return true;
 
 	for (int q = 0; q < enemies.size(); q++)
-		if (enemies[q]->chcekEntityCollions(player))
+		if (enemies[q]->chcekEntityCollions(*player))
 			return true;
 
 	return false;
@@ -216,11 +251,33 @@ void GameLogic::deathProc()
 	map->clearTail();
 }
 
+void GameLogic::saveGame()
+{
+	if (!FileManager::checkDir("resources/Saves"))
+		FileManager::createDir("resources","Saves");
+	if(!FileManager::createFile("resources/Saves", "gameSave.txt", std::vector<std::string>{std::to_string(currentLevelIndex), std::to_string(hitPoints)}))
+		FileManager::editFile("resources/Saves/gameSave.txt", std::vector<std::string>{std::to_string(currentLevelIndex), std::to_string(hitPoints)});
+
+}
+
+void GameLogic::loadGame()
+{
+	if (FileManager::checkDir("resources/Saves/gameSave.txt"))
+	{
+		std::vector<std::string> sLvl{};
+		FileManager::readFromFile(sLvl, "resources/Saves/gameSave.txt");
+
+		if (sLvl.size() == 2)
+		{
+			currentLevelIndex = std::stoi(sLvl[0]);
+			nextLevelIndex = 1 + currentLevelIndex;
+			hitPoints = std::stoi(sLvl[1]);
+		}
+	}
+}
+
 GameLogic::~GameLogic()
 {
-	delete player;
-	delete map;
-
 	if (nextLevelLoader.joinable())
 		nextLevelLoader.join();
 }

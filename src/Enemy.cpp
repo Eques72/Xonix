@@ -1,6 +1,6 @@
 #include "Enemy.h"
 
-int Enemy::checkWallCollisons(Map* map) //0 for no coll, 1 for vert coll, 2 for horizon coll
+int Enemy::checkWallCollisons(Map& map) //0 for no coll, 1 for vert coll, 2 for horizon coll
 {
 	std::pair<int, int> vert = { 0,0 };
 	std::pair<int, int> horiz = { 0,0 };
@@ -44,7 +44,7 @@ int Enemy::checkWallCollisons(Map* map) //0 for no coll, 1 for vert coll, 2 for 
 		int index = X + Y * Map::MAP_WIDTH;
 
 
-		int tileType = map->getTileState(index);
+		int tileType = map.getTileState(index);
 		if (tileType == Map::WALL_TILE)
 			collisionDir = 1;
 		if (tileType == Map::TAIL_TILE)
@@ -57,7 +57,7 @@ int Enemy::checkWallCollisons(Map* map) //0 for no coll, 1 for vert coll, 2 for 
 	{
 		int index = (horiz.first - horiz.first % Map::TILE_SIZE) / Map::TILE_SIZE
 			+ (Map::MAP_WIDTH * ((horiz.second - horiz.second % Map::TILE_SIZE) / Map::TILE_SIZE));
-		int tileType = map->getTileState(index);
+		int tileType = map.getTileState(index);
 		if (tileType == Map::WALL_TILE)
 			collisionDir = 2;
 		if (tileType == Map::TAIL_TILE)

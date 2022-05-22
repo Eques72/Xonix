@@ -17,10 +17,6 @@
 #include <thread>
 #include <vector>
 
-#include <random> //is it needed?
-
-
-
 
 class GameLogic
 {
@@ -28,10 +24,11 @@ class GameLogic
 	bool isMenuActive = true;
 	bool isPauseActive = false;
 	bool isDefeatBoxActive = false;
+	bool isGameCompleted = false;
 
 
-	Map* map;
-	Player* player;
+	std::shared_ptr<Map> map;
+	std::shared_ptr<Player> player;
 	KeyboardImput kI;
 	GWindow winG;
 
@@ -44,8 +41,8 @@ class GameLogic
 	std::thread nextLevelLoader;
 
 	int hitPoints; //+1 after finished level, -1 if any game over condition met
-	int nextLevelIndex = 1;
-	int currentLevelIndex = 0;
+	int nextLevelIndex = 2;
+	int currentLevelIndex = 1;
 	static const int maxLevels = 20;
 public:
 	GameLogic() { start(); };
@@ -56,7 +53,7 @@ public:
 	void setUpNextLevel();
 	bool checkLevelCompletion();
 	void getLevelInformation(int index);
-	void prepareNextLevel();
+	void prepareNextLevel(int lvlIndex);
 
 	void calculateLogic();
 	bool checkGameOverConditions();
@@ -65,6 +62,8 @@ public:
 
 	void drawEntities();
 
+	void saveGame();
+	void loadGame();
 
 	~GameLogic();
 };

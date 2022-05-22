@@ -1,6 +1,6 @@
 #include "HunterEnemy.h"
 
-HunterEnemy::HunterEnemy(float _x, float _y, int sp, int type, Player* p) :Enemy(sp, type)
+HunterEnemy::HunterEnemy(float _x, float _y, int sp, int type, std::shared_ptr<Player> p) :Enemy(sp, type)
 {
 	victim = p;
 
@@ -25,7 +25,7 @@ HunterEnemy::HunterEnemy(float _x, float _y, int sp, int type, Player* p) :Enemy
 	body.setPosition(sf::Vector2f(spawnPoint.first, spawnPoint.second));
 }
 
-void HunterEnemy::move(Map* map)
+void HunterEnemy::move(Map& map)
 {
 	std::pair<int, int> pl = victim->checkTileBellow(map);
 	if (pl.second == Map::WALL_TILE)

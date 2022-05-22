@@ -1,8 +1,8 @@
 #include "KeyboardImput.h"
 
-KeyboardImput::KeyboardImput(Player* p) : player(p) {}
+KeyboardImput::KeyboardImput(std::shared_ptr<Player> p) : player(p) {}
 
-void KeyboardImput::setPlayer(Player* p) { player = p; }
+void KeyboardImput::setPlayer(std::shared_ptr<Player> p) { player = p; }
 
 void KeyboardImput::checkKeyboardImput(bool& activatePause)
 {
