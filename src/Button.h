@@ -28,6 +28,8 @@ public:
 
 	void displayButton(sf::RenderWindow& win);
 	
+	void setUpText();
+
 	bool checkIfButtonPressed(sf::RenderWindow& win);
 
 	inline void setActive() 

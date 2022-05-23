@@ -49,10 +49,6 @@ std::pair<int, int> Entity::getRside()
 
 bool Entity::chcekEntityCollions(Entity& e)
 {
-	//if ((this->getLside().first < e->getLside().first && this->getRside().first > e->getLside().first)
-	//	|| (this->getLside().first < e->getRside().first && this->getRside().first > e->getRside().first)) //check X axis
-	//	if ((this->getDside().second > e->getDside().second && this->getUside().second < e->getDside().second)
-	//		|| (this->getDside().second > e->getUside().second && this->getUside().second < e->getUside().second)) //check Y axis			
 	if ((this->getLside().first < e.getLside().first && this->getRside().first > e.getLside().first)
 		|| (this->getLside().first < e.getRside().first && this->getRside().first > e.getRside().first)) //check X axis
 		if ((this->getDside().second > e.getDside().second && this->getUside().second < e.getDside().second)
@@ -62,31 +58,27 @@ bool Entity::chcekEntityCollions(Entity& e)
 	return false;
 };
 
-bool Entity::checkTailCollisons(Map& map)
+std::pair<bool, int> Entity::checkTailCollisons(Map& map)
 {
 	std::pair<int, int> vert = { 0,0 };
 	std::pair<int, int> horiz = { 0,0 };
 
-	//	if (velocity.second >= 1) //moves downwards
 	if (velocity.second > 0) //moves downwards
 	{
 		vert = getDside();
 		vert.second += speed;
 	}
 	else if (velocity.second < 0) //moves upwards
-//		else if (velocity.second <= -1) //moves upwards
 	{
 		vert = getUside();
 		vert.second -= speed;
 	}
 
-	//		if (velocity.first >= 1) //moves to the right
 	if (velocity.first > 0) //moves to the right
 	{
 		horiz = getRside();
 		horiz.first += speed;
 	}
-	//		else if (velocity.first <= -1) //moves to the left
 	else if (velocity.first < 0) //moves to the left
 	{
 		horiz = getLside();
@@ -94,7 +86,6 @@ bool Entity::checkTailCollisons(Map& map)
 	}
 
 	if (velocity.second != 0)
-		//		if (velocity.second == 1 || velocity.second == -1)
 	{
 		int X = (vert.first - vert.first % Map::TILE_SIZE) / Map::TILE_SIZE;
 		int Y = (vert.second - vert.second % Map::TILE_SIZE) / Map::TILE_SIZE;
@@ -102,10 +93,9 @@ bool Entity::checkTailCollisons(Map& map)
 
 		int tileType = map.getTileState(index);
 		if (tileType == Map::TAIL_TILE)
-			return true;
+			return std::make_pair(true, index);
 
 	}
-	//		if (velocity.first == 1 || velocity.first == -1)
 	if (velocity.first != 0)
 	{
 		int index = (horiz.first - horiz.first % Map::TILE_SIZE) / Map::TILE_SIZE
@@ -113,9 +103,9 @@ bool Entity::checkTailCollisons(Map& map)
 
 		int tileType = map.getTileState(index);
 		if (tileType == Map::TAIL_TILE)
-			return true;
+			return std::make_pair(true, index);
 
 	}
-	return false;
+	return std::make_pair(false, -1);
 }
 

@@ -43,6 +43,9 @@ public:
 
 	void waitFunction();
 
+	void setUpText();
+	void initializeButtons();
+
 	inline bool getStatus() 
 	{
 		return status;

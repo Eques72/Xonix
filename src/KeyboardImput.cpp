@@ -10,7 +10,6 @@ void KeyboardImput::checkKeyboardImput(bool& activatePause)
 		activatePause = true;
 	else
 	{
-
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 			player->planNextTurn(0, -1, 270);
 

@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 #include <ranges>
+#include <memory>
 #include "FileManager.h"
 #include "Animation.h"
 
@@ -14,7 +15,10 @@ class Map
 	sf::Sprite backgroundSprite;
 
 	sf::Image wallImage;
-	sf::Image tailImage;
+	sf::Texture textureWall;
+	
+	std::unique_ptr<Animation> crumbleCounter;
+	bool areTilesCrumbling = false;
 
 	std::array<int, 1620> mapping;
 	void createBackground();
@@ -30,8 +34,9 @@ public:
 	const static int WALL_TILE = 1;
 	const static int TAIL_TILE = 2;
 	const static int EMPTY_TILE = 0;
-	const static int CRUMBLING_TILE = 3;
 	const static int OCCUPIED_TILE = -1;
+
+	const std::array<int, 4> CRUMBLING_TILE = {3,4,5,6};
 
 	void draw(sf::RenderWindow& win) const;
 
@@ -52,6 +57,8 @@ public:
 
 	bool isTileInOuterRing(int index);
 
+	void startCrumbling(int index);
+	void updateCrumbling();
 
 };
 

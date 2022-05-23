@@ -1,7 +1,5 @@
 #include "TextBox.h"
 
-
-
 TextBox::TextBox(int _x, int _y, int _w, int _h, std::string _text, std::string _subtext)
 {
 	FileManager::openTTFfile(font, "resources/DIGIB.TTF");

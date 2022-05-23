@@ -1,33 +1,19 @@
 #include "DestroyerEnemy.h"
 
-DestroyerEnemy::DestroyerEnemy(float _x, float _y, int sp, int type) :Enemy(sp, type)
+DestroyerEnemy::DestroyerEnemy(float _x, float _y, int sp) :Enemy(sp)
 {
-	std::random_device rand_dev;
-	std::mt19937       generator(rand_dev());
-
 	int range_from = Map::TILE_SIZE * 2;
 	int range_to_X = Map::MAP_WIDTH_PIXELS - (Map::TILE_SIZE * 2);
 	int range_to_Y = Map::MAP_HEIGHT_PIXELS - (Map::TILE_SIZE * 2);
 
-	std::uniform_int_distribution<>  _X(range_from, range_to_X);
-	std::uniform_int_distribution<>  _Y(range_from, range_to_Y);
+	int tab[2] = { -1, 1 };
 
-	//	float tab[12][2] = { {1.0, 1.0},{-1.0, -1.0},{-1.0, 1.0},{1.0, -1.0},
-		//	{-2.0, 0.5},{-2.0, 0.5},{2.0, 0.5},{2.0, -0.5}, 
-			//{0.5, 2.0},{-0.5, 2.0},{0.5, -2.0},{-0.5, -2.0}	};
-	float tab[2] = { -1, 1 };
-
-	std::uniform_int_distribution<>  _Dir(0, 1);
-	//	std::uniform_int_distribution<>  _Dir(0, 11);
-	//	int _GetDir = _Dir(generator);
-
-	//	velocity = std::make_pair(tab[_GetDir][0], tab[_GetDir][1]);
-	velocity = std::make_pair(tab[_Dir(generator)], tab[_Dir(generator)]);
+	velocity = std::make_pair(tab[getRandomStartingPos(0, 1)], tab[getRandomStartingPos(0, 1)]);
 
 	loadTextures("resources/enemy.png");
 	body.setColor(sf::Color::Magenta);
 	body.setOrigin(15, 15);
-	body.setPosition(sf::Vector2f(_X(generator), _Y(generator)));
+	body.setPosition(sf::Vector2f(getRandomStartingPos(range_from, range_to_X), getRandomStartingPos(range_from, range_to_Y)));
 }
 
 void DestroyerEnemy::move(Map& map)

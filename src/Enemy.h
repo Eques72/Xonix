@@ -10,13 +10,13 @@ class Enemy : public Entity
 
 protected:
 
-	int enemyType;
-
-	Enemy(int speed, int type) : Entity(speed), enemyType(type) {};
+	Enemy(int speed) : Entity(speed) {};
 
 	virtual bool changeDirection(int param) = 0;
 
 	int checkWallCollisons(Map& map);
+
+	int getRandomStartingPos(int rangeFrom, int rangeTo);
 
 public:
 	int getIndexOfTile();

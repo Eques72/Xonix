@@ -14,13 +14,10 @@ void Map::draw(sf::RenderWindow& win) const
 	win.draw(backgroundSprite);
 
 	sf::Sprite sprite;
-	sf::Texture texture;
-
-	texture.loadFromImage(wallImage);
-	sprite.setTexture(texture);
+	sprite.setTexture(textureWall);
 	sprite.setTextureRect(sf::IntRect(0, 0, 30, 30));
 
-	int lastDrawnType = 1;
+	int lastDrawnType = Map::WALL_TILE;
 
 	for (int q{ 0 }; q < MAP_HEIGHT; q++)
 	{
@@ -33,17 +30,37 @@ void Map::draw(sf::RenderWindow& win) const
 
 			switch (mapping[w + q * MAP_WIDTH])
 			{
-			case 1:
-				if (lastDrawnType != 1)
+			case Map::WALL_TILE:
+				if (lastDrawnType != Map::WALL_TILE)
+				{
+//					sprite.setTexture(textureWall);
 					sprite.setTextureRect(sf::IntRect(0, 0, 30, 30));
+				}
 				win.draw(sprite);
-				lastDrawnType = 1;
+				lastDrawnType = Map::WALL_TILE;
 				break;
-			case 2:
-				if (lastDrawnType != 2)
+			case Map::TAIL_TILE:
+				if (lastDrawnType != Map::TAIL_TILE)
+				{
+		//			sprite.setTexture(textureTail);
 					sprite.setTextureRect(sf::IntRect(30, 0, 30, 30));
+//					sprite.setTextureRect(sf::IntRect(30, 0, 30, 30));
+				}
 				win.draw(sprite);
-				lastDrawnType = 2;
+				lastDrawnType = Map::TAIL_TILE;
+				break;
+			case 3: //crumbling tiles up to 6
+			case 4:
+			case 5:
+			case 6:
+//				if (lastDrawnType != Map::TAIL_TILE)
+	//			{
+	//				sprite.setTexture(textureTail);
+					sprite.setTextureRect(sf::IntRect(30* mapping[w + q * MAP_WIDTH]-1, 0, 30, 30));
+					//					sprite.setTextureRect(sf::IntRect(30, 0, 30, 30));
+				
+				win.draw(sprite);
+				lastDrawnType = 3;
 				break;
 			default:
 				break;
@@ -59,7 +76,8 @@ Map::Map()
 	createBackground();
 
 	FileManager::openImage(wallImage, "resources/Wall.png");
-//	FileManager::openImage(wallImage, "resources/Tail.png");
+	
+	textureWall.loadFromImage(wallImage);
 }
 
 
@@ -74,13 +92,15 @@ int Map::getTileState(int index)
 
 void Map::clearTail()
 {
-	auto d = [](int n) {return n == TAIL_TILE ? EMPTY_TILE : n; };
+	auto d = [](int n) {return n >= TAIL_TILE ? EMPTY_TILE : n; };
 	std::ranges::transform(mapping, mapping.begin(), d);
 }
 
 void Map::fillEmptySpace()
 {
+	auto c = [](int n) {return n >= 3 ? OCCUPIED_TILE : n; };
 	auto d = [](int n) {return n == OCCUPIED_TILE ? EMPTY_TILE : WALL_TILE; };
+	std::ranges::transform(mapping, mapping.begin(), c);
 	std::ranges::transform(mapping, mapping.begin(), d);
 }
 
@@ -88,7 +108,7 @@ void Map::changeTileState(int index, int newState) { mapping[index] = newState; 
 
 double Map::getProggres()
 {
-	auto i = std::ranges::count(mapping, 1);
+	auto i = std::ranges::count(mapping, Map::WALL_TILE);
 	return (((double)i / (double)mapping.size()) * 100.0);
 }
 
@@ -111,3 +131,60 @@ bool Map::isTileInOuterRing(int index)
 
 	return false;
 }
+
+void Map::startCrumbling(int index)
+{
+	this->changeTileState(index, Map::CRUMBLING_TILE[0]);
+	areTilesCrumbling = true;
+	crumbleCounter = std::make_unique<Animation>();
+	crumbleCounter->startMeasureTime(30);
+}
+
+
+void Map::updateCrumbling()
+{
+	if (areTilesCrumbling && crumbleCounter->checkIfTimePassed())
+	{
+		if (0 != std::ranges::count_if(mapping, [](int n) {return n >= 3; }))
+		{
+			std::vector<int> tilesToChange;
+			for (int q{ 1 }; q < MAP_HEIGHT - 1; q++)
+//			for (int q{ 0 }; q < MAP_HEIGHT; q++)
+			{
+				for (int w{ 1 }; w < MAP_WIDTH - 1; w++)
+//				for (int w{ 0 }; w < MAP_WIDTH; w++)
+				{
+					size_t i = w + q * MAP_WIDTH;
+					if (mapping[i] >= CRUMBLING_TILE[0] && mapping[i] <= CRUMBLING_TILE[3]) //tile is crumbling, increment and spread
+					{
+						changeTileState(i, mapping[i] + 1);
+						if (mapping[i - 1] == Map::TAIL_TILE)
+							tilesToChange.push_back(i - 1);
+//							changeTileState(i-1, CRUMBLING_TILE[0]);
+						if (mapping[i + 1] == Map::TAIL_TILE)
+							tilesToChange.push_back(i + 1);
+//							changeTileState(i+1, CRUMBLING_TILE[0]);
+						if (mapping[i + Map::MAP_WIDTH] == Map::TAIL_TILE)
+							tilesToChange.push_back(i + Map::MAP_WIDTH);
+//							changeTileState(i+Map::MAP_WIDTH, CRUMBLING_TILE[0]);
+						if (mapping[i - Map::MAP_WIDTH] == Map::TAIL_TILE)
+							tilesToChange.push_back(i - Map::MAP_WIDTH);
+//							changeTileState(i-Map::MAP_WIDTH, CRUMBLING_TILE[0]);
+					}
+					if (mapping[i] > CRUMBLING_TILE[3]) //tile has crumbled, make it empty tile
+						changeTileState(i, Map::EMPTY_TILE);
+				}
+			}
+
+			for (int i{ 0 }; i < tilesToChange.size(); i++)
+				changeTileState(tilesToChange[i], CRUMBLING_TILE[0]);
+			crumbleCounter->startMeasureTime(30);
+		}
+		else //stop crumbling if no tail
+		{
+			areTilesCrumbling = false;
+			crumbleCounter.release();
+		}
+	}
+}
+

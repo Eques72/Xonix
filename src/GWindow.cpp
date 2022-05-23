@@ -83,10 +83,8 @@ void GWindow::setPauseBox()
 	tB->turnFrame(false);
 }
 
-std::pair<bool, int> GWindow::displayTextBox()
+std::pair<bool, int> GWindow::getTextBoxResponse()
 {
-	tB->displayTextBox(this->window);
-
 	std::pair respond = tB->waitForButton(this->window);
 	if (!respond.first)
 	{
@@ -95,4 +93,11 @@ std::pair<bool, int> GWindow::displayTextBox()
 		return std::make_pair(false, respond.second);
 	}
 	return std::make_pair(true, respond.second);
+
+
+}
+
+void GWindow::displayTextBox()
+{
+	tB->displayTextBox(this->window);
 }

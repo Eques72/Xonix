@@ -13,7 +13,6 @@ void InfoPanel::setNewInfo(int level, int hp, double percent, double percent_nee
 	s_levels = std::to_string(level);
 	s_hp = std::to_string(hp);
 
-
 	s_completion = std::to_string(percent);
 	s_completion = s_completion.substr(0, 4);
 

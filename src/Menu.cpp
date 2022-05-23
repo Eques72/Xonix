@@ -4,14 +4,16 @@ Menu::Menu()
 {
 	waitFunction();
 
-	buttons[0] = std::make_unique<Button>((width / 2 - 300 - 50), height / 2 - 25 - 150, sf::Color(113, 114, 168), "Start");
-	buttons[1] = std::make_unique<Button>((width / 2 + 50), height / 2 - 25 - 150, sf::Color(113, 114, 168), "Continue");
-	buttons[2] = std::make_unique<Button>((width / 2 - 300 - 50), height / 2 + 25, sf::Color(113, 114, 168), "Credits");
-	buttons[3] = std::make_unique<Button>((width / 2 + 50), height / 2 + 25, sf::Color(113, 114, 168), "Exit");
-	buttons[4] = std::make_unique<Button>((0 + 50), 900 - 200, sf::Color(113, 114, 168), "Back");
+	initializeButtons();
+	setUpText();
 
-	buttons[4]->setInactive();
+	FileManager::openImage(backgroundImg, "resources/menuImg.png");
+	backgroundTx.loadFromImage(backgroundImg);
+	backgroundSprite.setTexture(backgroundTx);
+}
 
+void Menu::setUpText() 
+{
 	FileManager::openTTFfile(font, "resources/DIGIB.TTF");
 
 	menuText.setFont(font);
@@ -19,19 +21,26 @@ Menu::Menu()
 	menuText.setCharacterSize(150);
 	menuText.setFillColor(sf::Color(127, 224, 227));
 	menuText.setStyle(sf::Text::Bold);
-	
+
 	//center text
 	sf::FloatRect textRect = menuText.getLocalBounds();
 	menuText.setOrigin(textRect.width / 2, textRect.height / 2);
 	menuText.setPosition(sf::Vector2f(width / 2, 100));
 
 	creditsText = menuText;
-
-	FileManager::openImage(backgroundImg, "resources/menuImg.png");
-	backgroundTx.loadFromImage(backgroundImg);
-	backgroundSprite.setTexture(backgroundTx);
-
 }
+
+void Menu::initializeButtons()
+{
+	buttons[0] = std::make_unique<Button>((width / 2 - 300 - 50), height / 2 - 25 - 150, sf::Color(113, 114, 168), "Start");
+	buttons[1] = std::make_unique<Button>((width / 2 + 50), height / 2 - 25 - 150, sf::Color(113, 114, 168), "Continue");
+	buttons[2] = std::make_unique<Button>((width / 2 - 300 - 50), height / 2 + 25, sf::Color(113, 114, 168), "Credits");
+	buttons[3] = std::make_unique<Button>((width / 2 + 50), height / 2 + 25, sf::Color(113, 114, 168), "Exit");
+	buttons[4] = std::make_unique<Button>((0 + 50), 900 - 200, sf::Color(113, 114, 168), "Back");
+
+	buttons[4]->setInactive();
+}
+
 
 void Menu::displayMenu(sf::RenderWindow& win)
 {
@@ -56,17 +65,13 @@ std::array<bool, 3> Menu::menuLogic(sf::RenderWindow& win)
 	if (buttons[0]->checkIfButtonPressed(win)) //START
 	{
 		buttons[0]->setInactive();
-		menuChoices[0] = true;
-		menuChoices[1] = false;
-		menuChoices[2] = true;
+		menuChoices = { 1,0,1 };
 		status = 0;
 	}
 	if (buttons[1]->checkIfButtonPressed(win))  //CONTINUE
 	{
 		buttons[1]->setInactive();
-		menuChoices[0] = true;
-		menuChoices[1] = true;
-		menuChoices[2] = true;
+		menuChoices = { 1,1,1 };
 		status = 0;
 	}
 	if (buttons[2]->checkIfButtonPressed(win) || demandedCredits) //CREDITS
@@ -80,9 +85,7 @@ std::array<bool, 3> Menu::menuLogic(sf::RenderWindow& win)
 	if (buttons[3]->checkIfButtonPressed(win)) //EXIT
 	{
 		buttons[3]->setInactive();
-		menuChoices[0] = false;
-		menuChoices[1] = false;
-		menuChoices[2] = false;
+		menuChoices = { 0,0,0 };
 		status = 0;
 	}
 	if (buttons[4]->checkIfButtonPressed(win)) //BACK

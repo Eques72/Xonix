@@ -49,6 +49,7 @@ public:
 
 	void start();
 	void run();
+	void initializeGame(bool doLoadGame);
 
 	void setUpNextLevel();
 	bool checkLevelCompletion();
@@ -56,14 +57,21 @@ public:
 	void prepareNextLevel(int lvlIndex);
 
 	void calculateLogic();
-	bool checkGameOverConditions();
+	bool checkLivesLossConditions();
+
+	void handleEvents();
+	void handleGameConditions();
 
 	void deathProc();
 
 	void drawEntities();
+	void drawPanels();
 
 	void saveGame();
 	void loadGame();
+
+	void drop(int XY); //wype³nia plamami miejsca puste z którymi maj¹ styccznoœæ przeciwnicy
+	void conquer(std::vector<int> positions);
 
 	~GameLogic();
 };

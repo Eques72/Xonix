@@ -49,7 +49,8 @@ public:
 	void setDefeatBox();
 	void setPauseBox();
 	void setVictoryBox();
-	std::pair<bool, int> displayTextBox();
+	void displayTextBox();
+	std::pair<bool, int> getTextBoxResponse();
 
 	void setInfoPanel(int _x, int _y, int _w, int _h);
 	void displayInfoPanel(int level, int hp, double percent, double percent_needed);

@@ -40,7 +40,7 @@ public:
 
 	bool chcekEntityCollions(Entity& e);
 
-	bool checkTailCollisons(Map& map);
+	std::pair<bool, int> checkTailCollisons(Map& map);
 
 };
 #endif // !ENTITY

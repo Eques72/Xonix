@@ -22,26 +22,12 @@ class Player : public Entity
 	bool conquestPossible = false;
 	bool playerEntered = false;
 
-	void drop(Map& map, int XY); //wype³nia plamami miejsca puste z którymi maj¹ styccznoœæ przeciwnicy
+	//void drop(Map& map, int XY); //wype³nia plamami miejsca puste z którymi maj¹ styccznoœæ przeciwnicy
+//	void conquer(Map& map, std::vector<int> positions);
 
+	bool checkPlayerState(int state);
 
-
-	bool checkPlayerState(int state)
-	{
-		if (playerEntered == 0 && state == Map::EMPTY_TILE)
-		{
-			playerEntered = 1;
-			return 0;
-		}
-		else if (playerEntered == 1 && state == Map::WALL_TILE)
-		{
-			playerEntered = 0;
-			return 1;
-		}
-		return 0;
-	}
-
-
+	bool checkCrumbleCollison(Map& map);
 
 	void revivePlayer();
 
@@ -61,8 +47,6 @@ class Player : public Entity
 	*/
 	int checkCollisons(sf::Vector2f pos);
 
-
-
 	/**
 	* Funkcja zmienia o podane paremetry obecny kierunek postaci okreœlany wartoœæiami
 	* [	0 1	-1]
@@ -75,8 +59,6 @@ class Player : public Entity
 	void rotate(float angle);
 
 	bool getConquestState();
-
-	void conquer(Map& map, std::vector<int> positions);
 
 	friend class GameLogic;
 	friend class KeyboardImput;

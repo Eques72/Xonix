@@ -14,17 +14,13 @@ class HunterEnemy : public Enemy
 
 public:
 
-	HunterEnemy(float _x, float _y, int sp, int type, std::shared_ptr<Player> p);
+	HunterEnemy(float _x, float _y, int sp, std::shared_ptr<Player> p);
+
+	bool changeDirection(int param) override;
 
 	void move(Map& map) override;
 
-	/// <summary>
-	/// Function useless in this context
-	/// </summary>
-	bool changeDirection(int param) override;
-
 	void calmDown();
-
 };
 
 

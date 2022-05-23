@@ -7,9 +7,10 @@ class DestroyerEnemy : public Enemy
 {
 public:
 
-	DestroyerEnemy(float _x, float _y, int sp, int type);
+	DestroyerEnemy(float _x, float _y, int sp);
 
 	void move(Map& map) override;
+	
 	bool changeDirection(int param) override;
 
 	/// <summary>

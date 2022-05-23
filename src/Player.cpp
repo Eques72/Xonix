@@ -8,15 +8,29 @@ Player::Player(int s) : Entity(s)
 	body.setPosition(sf::Vector2f(0, 0));
 }
 
-void Player::drop(Map& map, int XY)
-{
-	if (map.getTileState(XY) == 0) map.changeTileState(XY, -1);
-	if (map.getTileState(XY - Map::MAP_WIDTH) == 0) drop(map, XY - Map::MAP_WIDTH);
-	if (map.getTileState(XY + Map::MAP_WIDTH) == 0) drop(map, XY + Map::MAP_WIDTH);
-	if (map.getTileState(XY - 1) == 0) drop(map, XY - 1);
-	if (map.getTileState(XY + 1) == 0) drop(map, XY + 1);
-}
+//void Player::drop(Map& map, int XY)
+//{
+//	if (map.getTileState(XY) == 0) map.changeTileState(XY, -1);
+//	if (map.getTileState(XY - Map::MAP_WIDTH) == 0) drop(map, XY - Map::MAP_WIDTH);
+//	if (map.getTileState(XY + Map::MAP_WIDTH) == 0) drop(map, XY + Map::MAP_WIDTH);
+//	if (map.getTileState(XY - 1) == 0) drop(map, XY - 1);
+//	if (map.getTileState(XY + 1) == 0) drop(map, XY + 1);
+//}
 
+bool Player::checkPlayerState(int state)
+{
+	if (playerEntered == 0 && state == Map::EMPTY_TILE)
+	{
+		playerEntered = 1;
+		return 0;
+	}
+	else if (playerEntered == 1 && state == Map::WALL_TILE)
+	{
+		playerEntered = 0;
+		return 1;
+	}
+	return 0;
+}
 
 void Player::revivePlayer()
 {
@@ -47,7 +61,6 @@ void Player::move(Map& map)
 		conquestPossible = checkPlayerState(tileInfo.second);
 	}
 
-
 	body.setPosition(sf::Vector2f(oldPos.x + (speed * velocity.first), oldPos.y + (speed * velocity.second)));
 
 	checkCollisons(body.getPosition());
@@ -68,8 +81,13 @@ int Player::checkCollisons(sf::Vector2f pos)
 	else if (pos.y > 900 - 15) body.setPosition(pos.x, 900 - 15);
 
 	return 0;
+}
 
-
+bool Player::checkCrumbleCollison(Map& map)
+{
+	if (checkTileBellow(map).second >= map.CRUMBLING_TILE[0])
+		return true;
+	return false;
 }
 
 std::pair<int, int> Player::checkTileBellow(Map& map)
@@ -97,15 +115,15 @@ void Player::rotate(float angle)
 
 bool Player::getConquestState() { return conquestPossible; }
 
-void Player::conquer(Map& map, std::vector<int> positions)
-{
-	for (auto a : positions)
-		drop(map, a);
-
-	map.fillEmptySpace();
-
-	conquestPossible = false;
-}
+//void Player::conquer(Map& map, std::vector<int> positions)
+//{
+//	for (auto a : positions)
+//		drop(map, a);
+//
+//	map.fillEmptySpace();
+//
+//	conquestPossible = false;
+//}
 
 std::pair<int, int> Player::getPositionPx()
 {

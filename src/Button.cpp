@@ -10,7 +10,17 @@ Button::Button(int _x, int _y, sf::Color c, std::string _label)
 	bodyButton.setPosition(sf::Vector2f(x, y));
 	bodyButton.setTexture(tx);
 
+	setUpText();
+};
 
+void Button::displayButton(sf::RenderWindow& win)
+{
+	win.draw(bodyButton);
+	win.draw(buttonText);
+}
+
+void Button::setUpText()
+{
 	FileManager::openTTFfile(f, "resources/DIGIB.TTF");
 	buttonText.setFont(f);
 	buttonText.setString(label);
@@ -22,12 +32,7 @@ Button::Button(int _x, int _y, sf::Color c, std::string _label)
 	sf::FloatRect textRect = buttonText.getLocalBounds();
 	buttonText.setOrigin(textRect.width / 2, textRect.height / 2);
 	buttonText.setPosition(sf::Vector2f(x + width / 2, y + (3 * height / 8)));
-};
 
-void Button::displayButton(sf::RenderWindow& win)
-{
-	win.draw(bodyButton);
-	win.draw(buttonText);
 }
 
 bool Button::checkIfButtonPressed(sf::RenderWindow& win)
