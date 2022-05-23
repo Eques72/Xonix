@@ -22,9 +22,6 @@ class Player : public Entity
 	bool conquestPossible = false;
 	bool playerEntered = false;
 
-	//void drop(Map& map, int XY); //wype³nia plamami miejsca puste z którymi maj¹ styccznoœæ przeciwnicy
-//	void conquer(Map& map, std::vector<int> positions);
-
 	bool checkPlayerState(int state);
 
 	bool checkCrumbleCollison(Map& map);

@@ -8,15 +8,6 @@ Player::Player(int s) : Entity(s)
 	body.setPosition(sf::Vector2f(0, 0));
 }
 
-//void Player::drop(Map& map, int XY)
-//{
-//	if (map.getTileState(XY) == 0) map.changeTileState(XY, -1);
-//	if (map.getTileState(XY - Map::MAP_WIDTH) == 0) drop(map, XY - Map::MAP_WIDTH);
-//	if (map.getTileState(XY + Map::MAP_WIDTH) == 0) drop(map, XY + Map::MAP_WIDTH);
-//	if (map.getTileState(XY - 1) == 0) drop(map, XY - 1);
-//	if (map.getTileState(XY + 1) == 0) drop(map, XY + 1);
-//}
-
 bool Player::checkPlayerState(int state)
 {
 	if (playerEntered == 0 && state == Map::EMPTY_TILE)
@@ -114,16 +105,6 @@ void Player::rotate(float angle)
 }
 
 bool Player::getConquestState() { return conquestPossible; }
-
-//void Player::conquer(Map& map, std::vector<int> positions)
-//{
-//	for (auto a : positions)
-//		drop(map, a);
-//
-//	map.fillEmptySpace();
-//
-//	conquestPossible = false;
-//}
 
 std::pair<int, int> Player::getPositionPx()
 {
