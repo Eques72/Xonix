@@ -1,4 +1,4 @@
-# Xonix, Pac-xon version [WIP]
+# Xonix, Pac-xon version
 Xonix is a game concept invented first by Ilan Raab and Dani Katz in 1984.
 This is a variation of this concept created using C++20 with SMFL library. 
 
