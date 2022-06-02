@@ -2,7 +2,7 @@
 
 Player::Player(int s) : Entity(s)
 {
-	loadTextures("resources/player.png");
+	loadTextures(FileManager::PLAYER_TX);
 	velocity = std::make_pair(0, 0);
 	body.setOrigin(15, 15);
 	body.setPosition(sf::Vector2f(0, 0));
@@ -64,14 +64,12 @@ void Player::planNextTurn(int x, int y, float degree)
 	nM.nextVelocity = std::make_pair(x, y);
 }
 
-int Player::checkCollisons(sf::Vector2f pos)
+void Player::checkCollisons(sf::Vector2f pos)
 {
 	if (pos.x < 15) body.setPosition(15, pos.y);
 	else if (pos.x > 1620 - 15) body.setPosition(1620 - 15, pos.y);
 	else if (pos.y < 15) body.setPosition(pos.x, 15);
 	else if (pos.y > 900 - 15) body.setPosition(pos.x, 900 - 15);
-
-	return 0;
 }
 
 bool Player::checkCrumbleCollison(Map& map)

@@ -1,17 +1,15 @@
 #include "Entity.h"
 
 
-void Entity::loadTextures(std::string path)
+void Entity::loadTextures(int type)
 {
-	FileManager::openImage(imageWithTexture,path);
-	texture.loadFromImage(imageWithTexture);
-	body.setTexture(texture);
+	body.setTexture(FileManager::get_tx(type));
 	body.setTextureRect(sf::IntRect(0, 0, ENTITY_RADIUS * 2, ENTITY_RADIUS * 2));
 }
 
 Entity::Entity(int s) : speed(s)
 {
-	animation = std::make_unique<Animation>(2, 2, texture);
+	animation = std::make_unique<Animation>();
 }
 
 void Entity::draw(sf::RenderWindow& win)

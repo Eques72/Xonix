@@ -7,16 +7,14 @@ Menu::Menu()
 	initializeButtons();
 	setUpText();
 
-	FileManager::openImage(backgroundImg, "resources/menuImg.png");
-	backgroundTx.loadFromImage(backgroundImg);
-	backgroundSprite.setTexture(backgroundTx);
+	FileManager::swapBackgroundImage(1);
+
+	backgroundSprite.setTexture(FileManager::get_tx(FileManager::BACKGROUND_TX));
 }
 
 void Menu::setUpText() 
 {
-	FileManager::openTTFfile(font, "resources/DIGIB.TTF");
-
-	menuText.setFont(font);
+	menuText.setFont(FileManager::get_ttl(FileManager::FONT_TTL));
 	menuText.setString("-  -  -  XONIX  -  -  -");
 	menuText.setCharacterSize(150);
 	menuText.setFillColor(sf::Color(127, 224, 227));

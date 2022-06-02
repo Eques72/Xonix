@@ -2,7 +2,6 @@
 
 InfoPanel::InfoPanel(int _x, int _y, int _w, int _h) : x(_x), y(_y), width(_w), height(_h)
 {
-	setUpFont(font);
 	setUpText(tLev, 50);
 	setUpText(tHp, 350);
 	setUpText(tComp, 750);
@@ -35,7 +34,7 @@ void InfoPanel::drawInfo(sf::RenderWindow & win)
 
 void InfoPanel::setUpText(sf::Text& t, int offset_x)
 {
-	t.setFont(font);
+	t.setFont(FileManager::get_ttl(FileManager::FONT_TTL));
 	t.setCharacterSize(60);
 	t.setFillColor(sf::Color(127, 224, 227));
 	t.setStyle(sf::Text::Bold);
@@ -46,7 +45,3 @@ void InfoPanel::setUpText(sf::Text& t, int offset_x)
 	t.setPosition(x + offset_x, y + height / 6);
 }
 
-void InfoPanel::setUpFont(sf::Font& f) 
-{
-	FileManager::openTTFfile(f, "resources/DIGIB.TTF");
-}

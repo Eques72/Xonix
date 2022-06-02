@@ -10,7 +10,7 @@ DestroyerEnemy::DestroyerEnemy(float _x, float _y, int sp) :Enemy(sp)
 
 	velocity = std::make_pair(tab[getRandomStartingPos(0, 1)], tab[getRandomStartingPos(0, 1)]);
 
-	loadTextures("resources/enemy.png");
+	loadTextures(FileManager::BLUE_ENEMY_TX);
 	body.setColor(sf::Color::Magenta);
 	body.setOrigin(15, 15);
 	body.setPosition(sf::Vector2f(getRandomStartingPos(range_from, range_to_X), getRandomStartingPos(range_from, range_to_Y)));

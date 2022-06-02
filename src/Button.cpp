@@ -3,13 +3,10 @@
 Button::Button(int _x, int _y, sf::Color c, std::string _label)
 	: x(_x), y(_y), color(c), label(_label)
 {
-	FileManager::openImage(img, "resources/button.png");
-	tx.loadFromImage(img);
-
+	bodyButton.setTexture(FileManager::get_tx(FileManager::BUTTON_TX));
 	bodyButton.setColor(color);
 	bodyButton.setPosition(sf::Vector2f(x, y));
-	bodyButton.setTexture(tx);
-
+	
 	setUpText();
 };
 
@@ -21,8 +18,7 @@ void Button::displayButton(sf::RenderWindow& win)
 
 void Button::setUpText()
 {
-	FileManager::openTTFfile(f, "resources/DIGIB.TTF");
-	buttonText.setFont(f);
+	buttonText.setFont(FileManager::get_ttl(FileManager::FONT_TTL));
 	buttonText.setString(label);
 	buttonText.setCharacterSize(55);
 	buttonText.setFillColor(sf::Color(169, 179, 186));

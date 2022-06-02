@@ -8,19 +8,21 @@
 #include "FileManager.h"
 #include "Animation.h"
 
+/// <summary>
+/// Class represents background and tile layer of the game
+/// </summary>
 class Map
 {
-	sf::Image backgroundImage;
-	sf::Texture backgroundTexture;
 	sf::Sprite backgroundSprite;
-
-	sf::Image wallImage;
-	sf::Texture textureWall;
 	
 	std::unique_ptr<Animation> crumbleCounter;
 	bool areTilesCrumbling = false;
 
 	std::array<int, 1620> mapping;
+
+	/// <summary>
+	/// Loads and sets background image
+	/// </summary>
 	void createBackground();
 
 public:
@@ -38,26 +40,62 @@ public:
 
 	const std::array<int, 4> CRUMBLING_TILE = {3,4,5,6};
 
+	/// <summary>
+	/// Method draws all visible tiles
+	/// </summary>
+	/// <param name="win">Reference to the window on which elements will be drawn</param>
 	void draw(sf::RenderWindow& win) const;
 
 	Map();
 
-	std::array<int, 1620>& getMapping();
-
+	/// <param name="index">Index of refered tile</param>
+	/// <returns>Returns state of the tile. Posible states are: -1,0,1,2,3,4,5,6</returns>
 	int getTileState(int index);
 
+	/// <summary>
+	/// Removes tail tiles from the map and replaces them with empty ones 
+	/// </summary>
 	void clearTail();
 
+	/// <summary>
+	/// Fills empty tiles (state = 0) with wall tiles ( state = 1 )
+	/// </summary>
 	void fillEmptySpace();
+
+	/// <summary>
+	/// Changes state of refered tile
+	/// </summary>
+	/// <param name="index">Index of refered tile</param>
+	/// <param name="newState">New state of the tile</param>
 	void changeTileState(int index, int newState);
 
+	/// <summary>
+	/// Calculates how many percent of the total tiles Wall tiles are covering
+	/// </summary>
+	/// <returns>Retruns percentage</returns>
 	double getProggres();
 
+	/// <summary>
+	/// Resets map tiles, sets them acordingly to the file content
+	/// </summary>
 	void resetMap();
 
+	/// <summary>
+	/// Check if given tile is a tile on the edge of the map
+	/// </summary>
+	/// <param name="index">Index of tile</param>
+	/// <returns>True if tile is on the edge</returns>
 	bool isTileInOuterRing(int index);
 
+	/// <summary>
+	/// Method starts chain reaction of transforming tail tiles to crumble tiles
+	/// </summary>
+	/// <param name="index">Index of first tile to be crumbled</param>
 	void startCrumbling(int index);
+
+	/// <summary>
+	/// Method escalates crumbling effect on other tiles and updates status on tiles that are already crumbling
+	/// </summary>
 	void updateCrumbling();
 
 };

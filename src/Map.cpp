@@ -2,10 +2,9 @@
 
 void Map::createBackground()
 {
-	FileManager::openImage(backgroundImage, "resources/BgPic.png");
-	
-	backgroundTexture.loadFromImage(backgroundImage);
-	backgroundSprite.setTexture(backgroundTexture);
+	FileManager::swapBackgroundImage(0);
+
+	backgroundSprite.setTexture(FileManager::get_tx(FileManager::BACKGROUND_TX));
 	backgroundSprite.setPosition(sf::Vector2f(0.f, 0.f));
 }
 
@@ -14,7 +13,7 @@ void Map::draw(sf::RenderWindow& win) const
 	win.draw(backgroundSprite);
 
 	sf::Sprite sprite;
-	sprite.setTexture(textureWall);
+	sprite.setTexture(FileManager::get_tx(FileManager::WALL_TX)); 
 	sprite.setTextureRect(sf::IntRect(0, 0, 30, 30));
 
 	int lastDrawnType = Map::WALL_TILE;
@@ -32,20 +31,15 @@ void Map::draw(sf::RenderWindow& win) const
 			{
 			case Map::WALL_TILE:
 				if (lastDrawnType != Map::WALL_TILE)
-				{
-//					sprite.setTexture(textureWall);
 					sprite.setTextureRect(sf::IntRect(0, 0, 30, 30));
-				}
+
 				win.draw(sprite);
 				lastDrawnType = Map::WALL_TILE;
 				break;
 			case Map::TAIL_TILE:
 				if (lastDrawnType != Map::TAIL_TILE)
-				{
-		//			sprite.setTexture(textureTail);
 					sprite.setTextureRect(sf::IntRect(30, 0, 30, 30));
-//					sprite.setTextureRect(sf::IntRect(30, 0, 30, 30));
-				}
+				
 				win.draw(sprite);
 				lastDrawnType = Map::TAIL_TILE;
 				break;
@@ -53,12 +47,7 @@ void Map::draw(sf::RenderWindow& win) const
 			case 4:
 			case 5:
 			case 6:
-//				if (lastDrawnType != Map::TAIL_TILE)
-	//			{
-	//				sprite.setTexture(textureTail);
 					sprite.setTextureRect(sf::IntRect(30* mapping[w + q * MAP_WIDTH]-1, 0, 30, 30));
-					//					sprite.setTextureRect(sf::IntRect(30, 0, 30, 30));
-				
 				win.draw(sprite);
 				lastDrawnType = 3;
 				break;
@@ -74,14 +63,8 @@ void Map::draw(sf::RenderWindow& win) const
 Map::Map()
 {
 	createBackground();
-
-	FileManager::openImage(wallImage, "resources/Wall.png");
-	
-	textureWall.loadFromImage(wallImage);
 }
 
-
-std::array<int, 1620>& Map::getMapping() { return mapping; }
 
 int Map::getTileState(int index)
 {
@@ -149,10 +132,8 @@ void Map::updateCrumbling()
 		{
 			std::vector<int> tilesToChange;
 			for (int q{ 1 }; q < MAP_HEIGHT - 1; q++)
-//			for (int q{ 0 }; q < MAP_HEIGHT; q++)
 			{
 				for (int w{ 1 }; w < MAP_WIDTH - 1; w++)
-//				for (int w{ 0 }; w < MAP_WIDTH; w++)
 				{
 					size_t i = w + q * MAP_WIDTH;
 					if (mapping[i] >= CRUMBLING_TILE[0] && mapping[i] <= CRUMBLING_TILE[3]) //tile is crumbling, increment and spread
@@ -160,16 +141,12 @@ void Map::updateCrumbling()
 						changeTileState(i, mapping[i] + 1);
 						if (mapping[i - 1] == Map::TAIL_TILE)
 							tilesToChange.push_back(i - 1);
-//							changeTileState(i-1, CRUMBLING_TILE[0]);
 						if (mapping[i + 1] == Map::TAIL_TILE)
 							tilesToChange.push_back(i + 1);
-//							changeTileState(i+1, CRUMBLING_TILE[0]);
 						if (mapping[i + Map::MAP_WIDTH] == Map::TAIL_TILE)
 							tilesToChange.push_back(i + Map::MAP_WIDTH);
-//							changeTileState(i+Map::MAP_WIDTH, CRUMBLING_TILE[0]);
 						if (mapping[i - Map::MAP_WIDTH] == Map::TAIL_TILE)
 							tilesToChange.push_back(i - Map::MAP_WIDTH);
-//							changeTileState(i-Map::MAP_WIDTH, CRUMBLING_TILE[0]);
 					}
 					if (mapping[i] > CRUMBLING_TILE[3]) //tile has crumbled, make it empty tile
 						changeTileState(i, Map::EMPTY_TILE);

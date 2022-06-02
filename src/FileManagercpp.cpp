@@ -1,18 +1,120 @@
 #include "FileManager.h"
 
-void FileManager::openImage(sf::Image& i, std::filesystem::path path)
+std::unique_ptr<sf::Texture> FileManager::player_tx = nullptr;
+std::unique_ptr<sf::Texture> FileManager::blue_enemy_tx = nullptr;
+std::unique_ptr<sf::Texture> FileManager::green_enemy_tx = nullptr;
+std::unique_ptr<sf::Texture> FileManager::background_tx = nullptr;
+std::unique_ptr<sf::Texture> FileManager::wall_tx = nullptr;
+std::unique_ptr<sf::Texture> FileManager::button_tx = nullptr;
+std::unique_ptr<sf::Font> FileManager::font_ttl = nullptr;
+
+int FileManager::chosedBackground = 1;
+
+void FileManager::setUpResources()
 {
+player_tx = std::make_unique<sf::Texture>();
+player_tx->loadFromImage(openImage("resources/player.png"));
+
+blue_enemy_tx = std::make_unique<sf::Texture>();
+blue_enemy_tx->loadFromImage(openImage("resources/enemy.png"));
+
+green_enemy_tx = std::make_unique<sf::Texture>();
+green_enemy_tx->loadFromImage(openImage("resources/enemyHunt.png"));
+
+background_tx = std::make_unique<sf::Texture>();
+background_tx->loadFromImage(openImage("resources/menuImg.png"));
+chosedBackground = 1;
+
+wall_tx = std::make_unique<sf::Texture>();
+wall_tx->loadFromImage(openImage("resources/Wall.png"));
+
+button_tx = std::make_unique<sf::Texture>();
+button_tx->loadFromImage(openImage("resources/button.png"));
+
+font_ttl = std::make_unique<sf::Font>();
+openTTFfile(*font_ttl.get(), "resources/DIGIB.TTF");
+}
+
+void FileManager::resetResources()
+{
+	player_tx.reset();
+	blue_enemy_tx.reset();
+	green_enemy_tx.reset();
+	background_tx.reset();
+	wall_tx.reset();
+	button_tx.reset();
+	font_ttl.reset();
+}
+
+void FileManager::swapBackgroundImage(int swap)
+{
+	if (chosedBackground == 1 && swap == 0)
+	{
+		background_tx->loadFromFile("resources/BgPic.png");
+		chosedBackground = 0;
+	}
+	else if(chosedBackground == 0 && swap == 1)
+	{
+		background_tx->loadFromFile("resources/menuImg.png");
+		chosedBackground = 1;
+	}
+}
+
+sf::Texture& FileManager::get_tx(int type)
+{
+	switch (type)
+	{
+	case PLAYER_TX:
+		return *player_tx.get();
+	case BLUE_ENEMY_TX:
+		return *blue_enemy_tx.get();
+	case GREEN_ENEMY_TX:
+		return *green_enemy_tx.get();
+	case BUTTON_TX:
+		return *button_tx.get();
+	case BACKGROUND_TX:
+		return *background_tx.get();
+	case WALL_TX:
+		return *wall_tx.get();
+	default:
+		break;
+	}
+
+	sf::Texture t;
+	return t;
+}
+
+sf::Font& FileManager::get_ttl(int type)
+{
+	switch (type)
+	{
+	case FONT_TTL:
+		return *font_ttl.get();
+	default:
+		break;
+	}
+
+	sf::Font f;
+	return f;
+}
+
+sf::Image FileManager::openImage(std::filesystem::path path)
+{
+	sf::Image i;
 	try
 	{
 		if (!checkDir(path))
 			throw(std::string("Unable to find image under path: " + path.string() + " \n"));
 
 		i.loadFromFile(path.string());
+	
+		return i;
 	}
 	catch (std::string& e)
 	{
 		std::cout << e;
 	}
+	return i;
 }
 
 void FileManager::openTTFfile(sf::Font& f, std::filesystem::path path)
@@ -173,6 +275,18 @@ bool FileManager::validateMap(std::string mS)
 	std::regex r("[01,]+");
 
 	if (std::regex_match(mS, r))
+		return true;
+	return false;
+}
+
+bool FileManager::validateSaves(std::vector<std::string> sav)
+{
+	std::regex r("[0-5]\n[0-9]{1,2}\n");
+	std::string s;
+	for (auto a : sav)
+		s += a+"\n";
+
+	if (std::regex_match(s, r))
 		return true;
 	return false;
 }

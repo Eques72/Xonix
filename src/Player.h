@@ -4,13 +4,15 @@
 #include <set>
 #include "Entity.h"
 
+/// <summary>
+/// Class represents a player character
+/// </summary>
 class Player : public Entity
 {
-	/**
-	* Struktura przechowuj¹ca dane potrzebne do zmiany kierunku postaci,
-	* przypisywane s¹ kiedy steruj¹cy u¿ytkownik zarz¹da obrotu postaci
-	* Dane wyko¿ystane s¹ przy najbli¿szym mo¿liwym obrocie
-	*/
+private:
+	/// <summary>
+	/// Structure that is used to hold data needed for change of entity direction
+	/// </summary>
 	struct nextMove
 	{
 		bool inQueue = false;
@@ -22,39 +24,59 @@ class Player : public Entity
 	bool conquestPossible = false;
 	bool playerEntered = false;
 
+	/// <summary>
+	/// Check if player is currently on empty tile or wall tile and matches its state accordingly
+	/// </summary>
+	/// <param name="state">State of tile bellow player</param>
+	/// <returns>Retruns true if player has exited empty tile and entered wall tile</returns>
 	bool checkPlayerState(int state);
 
+	/// <summary>
+	/// Checks if player is on any crumbling tile;
+	/// </summary>
+	/// <param name="map">Reference to active map</param>
+	/// <returns>Returns true if it touches a crumbling tile</returns>
 	bool checkCrumbleCollison(Map& map);
 
+	/// <summary>
+	/// Resets player position to starting position
+	/// </summary>
 	void revivePlayer();
-
-	/**
-	* Funkcja ujmuj¹ca wszystkie aspekty poruszania siê postaci wywo³uj¹ca inne wyspecjalizowane wynkcje
-	* oraz obliczaj¹ca podstawowe parametry poruszania
-	*/
+	
+	/// <summary>
+	/// Method handles all aspect of character movement
+	/// </summary>
+	/// <param name="map">Reference to active map</param>
 	void move(Map& map) override;
 
-	/**
-	* Funkcja zapewniaj¹ca ¿e postaæ obróci siê w najbli¿szym mo¿liwym momencie,
-	* kiedy centrum bêdzie pokrywa³o siê z centrum pola na mapie
-	*/
+	/// <summary>
+	/// Method sets up nextMove struture to hold all data needed for change of direction
+	/// </summary>
+	/// <param name="degree">Degrees to turn</param>
 	void planNextTurn(int x, int y, float degree);
-	/**
-	* Funkcja sprawdza kolizje z krañcami mapy, ustawia odpowiednio postaæ aby nie wykroczy³a poza granice
-	*/
-	int checkCollisons(sf::Vector2f pos);
+	
+	/// <summary>
+	/// Method check collisions with map borders and prevents entity from leaving
+	/// </summary>
+	/// <param name="pos">Entity position (coordinates)</param>
+	void checkCollisons(sf::Vector2f pos);
 
-	/**
-	* Funkcja zmienia o podane paremetry obecny kierunek postaci okreœlany wartoœæiami
-	* [	0 1	-1]
-	*/
+	/// <summary>
+	/// Changes velocity of the player
+	/// </summary>
+	/// <param name="x">new x velocity</param>
+	/// <param name="y">new y velocity</param>
 	void changeVelocity(float x, float y);
 
-	/**
-	* Funkcja obraca Sprite o podany w stopniach k¹t liczony zawsze od zwrotu gdy rotacja wynosi domyœln¹ wartoœæ
-	*/
+	/// <summary>
+	/// Rotates player's sprite by certain degrees
+	/// </summary>
+	/// <param name="angle">Angle in degrees</param>
 	void rotate(float angle);
 
+	/// <summary>
+	/// </summary>
+	/// <returns>Returns conquestPossible variable</returns>
 	bool getConquestState();
 
 	friend class GameLogic;
@@ -62,19 +84,19 @@ class Player : public Entity
 
 public:
 
-	/**
-	* Konstruktor iniclalizuj¹cy startowe parametry postaci oraz tworz¹cy dynamiczne obiekty
-	*/
 	Player(int s);
 
+	/// <summary>
+	/// </summary>
+	/// <returns>Returns players position</returns>
 	std::pair<int, int> getPositionPx();
 
-	/**
-	* Funkcja sprawdza nad jakiego typu polem jest centrum postaci,
-	* Przyjmuje wskaŸnik na obiekt Mapy u¿ywanej obecnie
-	* Wywo³ywana w Player::move() tylko kiedy œrodek wchodzi na nowy obszar(pole)
-	* Zwraca okreœlany numerycznie typ pola pod postaci¹
-	*/
+
+	/// <summary>
+	/// Method checks what tile type is bellow player sprite
+	/// </summary>
+	/// <param name="map">Reference to active map</param>
+	/// <returns>Returns index of the tile and the tile type</returns>
 	std::pair<int, int> checkTileBellow(Map& map);
 };
 

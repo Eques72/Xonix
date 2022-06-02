@@ -1,8 +1,6 @@
 #include "Animation.h"
 
-Animation::Animation() {}
-
-Animation::Animation(int x, int y, sf::Texture& t) {
+Animation::Animation() {
 	startTime = std::chrono::steady_clock::now();
 }
 

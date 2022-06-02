@@ -11,7 +11,7 @@ HunterEnemy::HunterEnemy(float _x, float _y, int sp, std::shared_ptr<Player> p) 
 
 	velocity = std::make_pair(0, 0);
 
-	loadTextures("resources/enemyHunt.png");
+	loadTextures(FileManager::GREEN_ENEMY_TX);
 	body.setOrigin(15, 15);
 	spawnPoint.first = getRandomStartingPos(range_from_X, range_to_X); 
 	spawnPoint.second = getRandomStartingPos(range_from_Y, range_to_Y); 

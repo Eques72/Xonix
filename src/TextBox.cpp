@@ -2,8 +2,6 @@
 
 TextBox::TextBox(int _x, int _y, int _w, int _h, std::string _text, std::string _subtext)
 {
-	FileManager::openTTFfile(font, "resources/DIGIB.TTF");
-	
 	setUpText(text, _text, 150);
 	//place text
 	text.setPosition(_x + _w/2, _y + _h / 8);
@@ -20,8 +18,6 @@ TextBox::TextBox(int _x, int _y, int _w, int _h, std::string _text, std::string 
 
 TextBox::TextBox(int _x, int _y, int _w, int _h, std::string _text, std::string _subtext, std::string buttonLabel)
 {
-	FileManager::openTTFfile(font, "resources/DIGIB.TTF");
-
 	setUpText(text, _text, 150);
 	//place text
 	text.setPosition(_x + _w / 2, _y + _h / 8);
@@ -38,8 +34,6 @@ TextBox::TextBox(int _x, int _y, int _w, int _h, std::string _text, std::string 
 
 TextBox::TextBox(int _x, int _y, int _w, int _h, std::string _text, std::string _subtext, std::string buttonLabel1, std::string buttonLabel2)
 {
-	FileManager::openTTFfile(font, "resources/DIGIB.TTF");
-
 	setUpText(text, _text, 150);
 	//place text
 	text.setPosition(_x + _w / 2, _y + _h / 8);
@@ -58,7 +52,7 @@ TextBox::TextBox(int _x, int _y, int _w, int _h, std::string _text, std::string 
 
 void TextBox::setUpText(sf::Text& text, std::string s, float textSize)
 {
-	text.setFont(font);
+	text.setFont(FileManager::get_ttl(FileManager::FONT_TTL));
 	text.setCharacterSize(textSize);
 	text.setFillColor(sf::Color(100, 200, 200));
 	text.setStyle(sf::Text::Bold);

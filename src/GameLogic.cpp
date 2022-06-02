@@ -2,6 +2,8 @@
 
 void GameLogic::start()
 {
+	FileManager::setUpResources();
+
 	while (isMenuActive)
 	{
 		winG.setMenu();
@@ -9,6 +11,8 @@ void GameLogic::start()
 		std::array<bool, 3> menuChoices = winG.displayMenu();
 		isMenuActive = menuChoices[2];
 	
+		winG.deleteMenu();
+
 		gameOver = false;
 		isPauseActive = false;
 		isDefeatBoxActive = false;
@@ -97,7 +101,7 @@ void GameLogic::handleEvents()
 	if (isPauseActive && winG.pasuseBoxInitialized == false)
 	{
 		winG.setPauseBox();
-		winG.pasuseBoxInitialized = true;
+		winG.pasuseBoxInitialized = true;	
 	}
 
 	//(If none of text boxes are active proced with game logic
@@ -285,8 +289,8 @@ void GameLogic::loadGame()
 	{
 		std::vector<std::string> sLvl{};
 		FileManager::readFromFile(sLvl, "resources/Saves/gameSave.txt");
-
-		if (sLvl.size() == 2)
+		
+		if (FileManager::validateSaves(sLvl))
 		{
 			currentLevelIndex = std::stoi(sLvl[0]);
 			nextLevelIndex = 1 + currentLevelIndex;
@@ -316,6 +320,8 @@ void GameLogic::conquer(std::vector<int> positions)
 
 GameLogic::~GameLogic()
 {
+	FileManager::resetResources();
+
 	if (nextLevelLoader.joinable())
 		nextLevelLoader.join();
 }

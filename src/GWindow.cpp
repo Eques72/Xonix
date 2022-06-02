@@ -12,7 +12,7 @@ void GWindow::config()
 void GWindow::setGameIcon()
 {
 	sf::Image icon;
-	FileManager::openImage(icon, "resources/Logo.png");
+	icon = FileManager::openImage("resources/Logo.png");
 	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 }
 
@@ -23,6 +23,10 @@ GWindow::GWindow()
 
 sf::RenderWindow& GWindow::getWindow() { return window; }
 
+void GWindow::deleteMenu()
+{
+	menu.release();
+}
 
 void GWindow::setMenu() 
 {
